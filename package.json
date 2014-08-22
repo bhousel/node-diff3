@@ -1,0 +1,24 @@
+{
+  "name": "node-diff3",
+  "version": "0.0.1",
+  "description": "This is a node.js library for text diffing and three-way-merge. It originally come from project Synchrotron, created by Tony Garnock-Jones.",
+  "main": "diff.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/langram/node-diff3.git"
+  },
+  "keywords": [
+    "diff",
+    "diff3",
+    "merge"
+  ],
+  "author": "Tangram Liu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/langram/node-diff3/issues"
+  },
+  "homepage": "https://github.com/langram/node-diff3"
+}
