@@ -262,8 +262,8 @@ var Diff3 = {
     // internal representation of merge decisions it's taken. The
     // interested reader may wish to consult
     //
-    // Sanjeev Khanna, Keshav Kunal, and Benjamin C. Pierce. 'A
-    // Formal Investigation of Diff3.' In Arvind and Prasad,
+    // Sanjeev Khanna, Keshav Kunal, and Benjamin C. Pierce.
+    // 'A Formal Investigation of Diff3.' In Arvind and Prasad,
     // editors, Foundations of Software Technology and Theoretical
     // Computer Science (FSTTCS), December 2007.
     //
