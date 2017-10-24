@@ -1,29 +1,3 @@
-// diff function come from Project Synchrotron. For more detail please
-// visit: http://homepages.kcbbs.gen.nz/tonyg/projects/synchrotron.html
-
-// Copyright (c) 2006, 2008 Tony Garnock-Jones <tonyg@lshift.net>
-// Copyright (c) 2006, 2008 LShift Ltd. <query@lshift.net>
-//
-// Permission is hereby granted, free of charge, to any person
-// obtaining a copy of this software and associated documentation files
-// (the "Software"), to deal in the Software without restriction,
-// including without limitation the rights to use, copy, modify, merge,
-// publish, distribute, sublicense, and/or sell copies of the Software,
-// and to permit persons to whom the Software is furnished to do so,
-// subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-// BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
 var diff = {
   LCS: function(file1, file2) {
     /* Text diff algorithm following Hunt and McIlroy 1976.
@@ -425,7 +399,7 @@ var diff = {
     flushOk();
     return result;
   },
-  
+
   merge: function (a, o, b) {
     var merger = diff.diff3Merge(a, o, b, true);
     var conflict = false;
@@ -470,7 +444,7 @@ var diff = {
     }
     return {"conflict": conflict,
             "result": lines};
-  }    
+  }
 };
 
 exports.diff = diff;
