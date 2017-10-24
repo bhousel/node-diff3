@@ -5,6 +5,7 @@
 }(this, (function () {
 
 var Diff3$1 = {
+
   LCS: function(file1, file2) {
     /* Text diff algorithm following Hunt and McIlroy 1976.
      * J. W. Hunt and M. D. McIlroy, An algorithm for differential file
@@ -30,9 +31,9 @@ var Diff3$1 = {
       }
     }
 
-    candidates = [{file1index: -1,
-                   file2index: -1,
-                   chain: null}];
+    candidates = [
+      { file1index: -1, file2index: -1, chain: null }
+    ];
 
     for (i = 0; i < file1.length; i++) {
       line = file1[i];
@@ -51,9 +52,7 @@ var Diff3$1 = {
         }
 
         if (s < candidates.length) {
-          newCandidate = {file1index: i,
-                          file2index: j,
-                          chain: candidates[s]};
+          newCandidate = { file1index: i, file2index: j, chain: candidates[s] };
           if (r === candidates.length) {
             candidates.push(c);
           } else {
@@ -76,6 +75,7 @@ var Diff3$1 = {
 
     return candidates[candidates.length - 1];
   },
+
 
   diffComm: function(file1, file2) {
     // We apply the LCS to build a 'comm'-style picture of the
@@ -126,6 +126,7 @@ var Diff3$1 = {
     return result;
   },
 
+
   diffPatch: function(file1, file2) {
     // We apply the LCD to build a JSON representation of a
     // diff(1)-style patch.
@@ -139,9 +140,11 @@ var Diff3$1 = {
       for (var i = 0; i < length; i++) {
         chunk.push(file[offset + i]);
       }
-      return {offset: offset,
-              length: length,
-              chunk: chunk};
+      return {
+        offset: offset,
+        length: length,
+        chunk: chunk
+      };
     }
 
     for (var candidate = Diff3$1.LCS(file1, file2);
@@ -154,18 +157,17 @@ var Diff3$1 = {
       tail2 = candidate.file2index;
 
       if (mismatchLength1 || mismatchLength2) {
-        result.push({file1: chunkDescription(file1,
-                            candidate.file1index + 1,
-                            mismatchLength1),
-                     file2: chunkDescription(file2,
-                            candidate.file2index + 1,
-                            mismatchLength2)});
+        result.push({
+          file1: chunkDescription(file1, candidate.file1index + 1, mismatchLength1),
+          file2: chunkDescription(file2, candidate.file2index + 1, mismatchLength2)
+        });
       }
     }
 
     result.reverse();
     return result;
   },
+
 
   stripPatch: function(patch) {
     // Takes the output of Diff3.diffPatch(), and removes
@@ -174,12 +176,14 @@ var Diff3$1 = {
     var newpatch = [];
     for (var i = 0; i < patch.length; i++) {
       var chunk = patch[i];
-      newpatch.push({file1: {offset: chunk.file1.offset,
-                     length: chunk.file1.length},
-                     file2: {chunk: chunk.file2.chunk}});
+      newpatch.push({
+        file1: { offset: chunk.file1.offset, length: chunk.file1.length },
+        file2: { chunk: chunk.file2.chunk }
+      });
     }
     return newpatch;
   },
+
 
   invertPatch: function(patch) {
     // Takes the output of Diff3.diffPatch(), and inverts the
@@ -193,6 +197,7 @@ var Diff3$1 = {
       chunk.file2 = tmp;
     }
   },
+
 
   patch: function (file, patch) {
     // Applies a patch to a file.
@@ -223,6 +228,7 @@ var Diff3$1 = {
     return result;
   },
 
+
   diffIndices: function(file1, file2) {
     // We apply the LCS to give a simple representation of the
     // offsets and lengths of mismatched chunks in the input
@@ -242,14 +248,17 @@ var Diff3$1 = {
       tail2 = candidate.file2index;
 
       if (mismatchLength1 || mismatchLength2) {
-        result.push({file1: [tail1 + 1, mismatchLength1],
-                     file2: [tail2 + 1, mismatchLength2]});
+        result.push({
+          file1: [tail1 + 1, mismatchLength1],
+          file2: [tail2 + 1, mismatchLength2]
+        });
       }
     }
 
     result.reverse();
     return result;
   },
+
 
   diff3MergeIndices: function (a, o, b) {
     // Given three files, A, O, and B, where both A and B are
@@ -348,6 +357,7 @@ var Diff3$1 = {
     return result;
   },
 
+
   diff3Merge: function (a, o, b, excludeFalseConflicts) {
     // Applies the output of Diff3.diff3MergeIndices to actually
     // construct the merged file; the returned result alternates
@@ -390,12 +400,16 @@ var Diff3$1 = {
           pushOk(files[0].slice(x[1], x[1] + x[2]));
         } else {
           flushOk();
-          result.push({conflict: {a: a.slice(x[1], x[1] + x[2]),
-                                  aIndex: x[1],
-                                  o: o.slice(x[3], x[3] + x[4]),
-                                  oIndex: x[3],
-                                  b: b.slice(x[5], x[5] + x[6]),
-                                  bIndex: x[5]}});
+          result.push({
+            conflict: {
+              a: a.slice(x[1], x[1] + x[2]),
+              aIndex: x[1],
+              o: o.slice(x[3], x[3] + x[4]),
+              oIndex: x[3],
+              b: b.slice(x[5], x[5] + x[6]),
+              bIndex: x[5]
+            }
+          });
         }
       } else {
         pushOk(files[side].slice(x[1], x[1] + x[2]));
@@ -416,14 +430,19 @@ var Diff3$1 = {
         lines = lines.concat(item.ok);
       } else {
         conflict = true;
-        lines = lines.concat(['\n<<<<<<<<<\n'], item.conflict.a,
-                   ['\n=========\n'], item.conflict.b,
-                   ['\n>>>>>>>>>\n']);
+        lines = lines.concat(
+          ['\n<<<<<<<<<\n'], item.conflict.a,
+          ['\n=========\n'], item.conflict.b,
+          ['\n>>>>>>>>>\n']
+        );
       }
     }
-    return {'conflict': conflict,
-            'result': lines};
+    return {
+      conflict: conflict,
+      result: lines
+    };
   },
+
 
   mergeDigIn: function (a, o, b) {
     var merger = Diff3$1.diff3Merge(a, o, b, false);
@@ -441,16 +460,21 @@ var Diff3$1 = {
             lines = lines.concat(inner.common);
           } else {
             conflict = true;
-            lines = lines.concat(['\n<<<<<<<<<\n'], inner.file1,
-                       ['\n=========\n'], inner.file2,
-                       ['\n>>>>>>>>>\n']);
+            lines = lines.concat(
+              ['\n<<<<<<<<<\n'], inner.file1,
+              ['\n=========\n'], inner.file2,
+              ['\n>>>>>>>>>\n']
+            );
           }
         }
       }
     }
-    return {'conflict': conflict,
-            'result': lines};
+    return {
+      conflict: conflict,
+      result: lines
+    };
   }
+
 };
 
 return Diff3$1;
