@@ -24,7 +24,7 @@
   },
   "scripts": {
     "build": "rollup -f umd -n Diff3 index.mjs --no-indent --no-strict -o index.js",
-    "lint": "eslint index.mjs test",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint index.mjs test/*.js",
+    "test": "npm run lint && npm run build && tap --cov test/*.js"
   }
 }
