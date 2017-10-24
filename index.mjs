@@ -1,4 +1,6 @@
-var diff = {
+export default Diff3;
+
+var Diff3 = {
   LCS: function(file1, file2) {
     /* Text diff algorithm following Hunt and McIlroy 1976.
      * J. W. Hunt and M. D. McIlroy, An algorithm for differential file
@@ -72,7 +74,7 @@ var diff = {
   },
 
   diffComm: function(file1, file2) {
-    // We apply the LCS to build a "comm"-style picture of the
+    // We apply the LCS to build a 'comm'-style picture of the
     // differences between file1 and file2.
 
     var result = [];
@@ -88,7 +90,7 @@ var diff = {
       }
     }
 
-    for (var candidate = diff.LCS(file1, file2);
+    for (var candidate = Diff3.LCS(file1, file2);
          candidate !== null;
          candidate = candidate.chain)
     {
@@ -138,7 +140,7 @@ var diff = {
               chunk: chunk};
     }
 
-    for (var candidate = diff.LCS(file1, file2);
+    for (var candidate = Diff3.LCS(file1, file2);
          candidate !== null;
          candidate = candidate.chain)
     {
@@ -162,7 +164,7 @@ var diff = {
   },
 
   stripPatch: function(patch) {
-    // Takes the output of diff.diffPatch(), and removes
+    // Takes the output of Diff3.diffPatch(), and removes
     // information from it. It can still be used by patch(),
     // below, but can no longer be inverted.
     var newpatch = [];
@@ -176,7 +178,7 @@ var diff = {
   },
 
   invertPatch: function(patch) {
-    // Takes the output of diff.diffPatch(), and inverts the
+    // Takes the output of Diff3.diffPatch(), and inverts the
     // sense of it, so that it can be applied to file2 to give
     // file1 rather than the other way around.
 
@@ -191,8 +193,8 @@ var diff = {
   patch: function (file, patch) {
     // Applies a patch to a file.
     //
-    // Given file1 and file2, diff.patch(file1,
-    // diff.diffPatch(file1, file2)) should give file2.
+    // Given file1 and file2, Diff3.patch(file1,
+    // Diff3.diffPatch(file1, file2)) should give file2.
 
     var result = [];
     var commonOffset = 0;
@@ -226,7 +228,7 @@ var diff = {
     var tail1 = file1.length;
     var tail2 = file2.length;
 
-    for (var candidate = diff.LCS(file1, file2);
+    for (var candidate = Diff3.LCS(file1, file2);
        candidate !== null;
        candidate = candidate.chain)
     {
@@ -251,16 +253,16 @@ var diff = {
     // internal representation of merge decisions it's taken. The
     // interested reader may wish to consult
     //
-    // Sanjeev Khanna, Keshav Kunal, and Benjamin C. Pierce. "A
-    // Formal Investigation of Diff3." In Arvind and Prasad,
+    // Sanjeev Khanna, Keshav Kunal, and Benjamin C. Pierce. 'A
+    // Formal Investigation of Diff3.' In Arvind and Prasad,
     // editors, Foundations of Software Technology and Theoretical
     // Computer Science (FSTTCS), December 2007.
     //
     // (http://www.cis.upenn.edu/~bcpierce/papers/diff3-short.pdf)
     var i;
 
-    var m1 = diff.diffIndices(o, a);
-    var m2 = diff.diffIndices(o, b);
+    var m1 = Diff3.diffIndices(o, a);
+    var m2 = Diff3.diffIndices(o, b);
 
     var hunks = [];
     function addHunk(h, side) {
@@ -268,7 +270,7 @@ var diff = {
     }
     for (i = 0; i < m1.length; i++) { addHunk(m1[i], 0); }
     for (i = 0; i < m2.length; i++) { addHunk(m2[i], 2); }
-    hunks.sort(function (x, y) { return x[0] - y[0] });
+    hunks.sort(function (x, y) { return x[0] - y[0]; });
 
     var result = [];
     var commonOffset = 0;
@@ -296,7 +298,7 @@ var diff = {
 
       copyCommon(regionLhs);
       if (firstHunkIndex === hunkIndex) {
-        // The "overlap" was only one hunk long, meaning that
+        // The 'overlap' was only one hunk long, meaning that
         // there's no conflict here. Either a and o were the
         // same, or b and o were the same.
         if (hunk[4] > 0) {
@@ -343,13 +345,13 @@ var diff = {
   },
 
   diff3Merge: function (a, o, b, excludeFalseConflicts) {
-    // Applies the output of diff.diff3MergeIndices to actually
+    // Applies the output of Diff3.diff3MergeIndices to actually
     // construct the merged file; the returned result alternates
-    // between "ok" and "conflict" blocks.
+    // between 'ok' and 'conflict' blocks.
 
     var result = [];
     var files = [a, o, b];
-    var indices = diff.diff3MergeIndices(a, o, b);
+    var indices = Diff3.diff3MergeIndices(a, o, b);
 
     var okLines = [];
     function flushOk() {
@@ -401,7 +403,7 @@ var diff = {
   },
 
   merge: function (a, o, b) {
-    var merger = diff.diff3Merge(a, o, b, true);
+    var merger = Diff3.diff3Merge(a, o, b, true);
     var conflict = false;
     var lines = [];
     for (var i = 0; i < merger.length; i++) {
@@ -410,17 +412,17 @@ var diff = {
         lines = lines.concat(item.ok);
       } else {
         conflict = true;
-        lines = lines.concat(["\n<<<<<<<<<\n"], item.conflict.a,
-                   ["\n=========\n"], item.conflict.b,
-                   ["\n>>>>>>>>>\n"]);
+        lines = lines.concat(['\n<<<<<<<<<\n'], item.conflict.a,
+                   ['\n=========\n'], item.conflict.b,
+                   ['\n>>>>>>>>>\n']);
       }
     }
-    return {"conflict": conflict,
-            "result": lines};
+    return {'conflict': conflict,
+            'result': lines};
   },
 
   mergeDigIn: function (a, o, b) {
-    var merger = diff.diff3Merge(a, o, b, false);
+    var merger = Diff3.diff3Merge(a, o, b, false);
     var conflict = false;
     var lines = [];
     for (var i = 0; i < merger.length; i++) {
@@ -428,23 +430,22 @@ var diff = {
       if (item.ok) {
         lines = lines.concat(item.ok);
       } else {
-        var c = diff.diffComm(item.conflict.a, item.conflict.b);
+        var c = Diff3.diffComm(item.conflict.a, item.conflict.b);
         for (var j = 0; j < c.length; j++) {
           var inner = c[j];
           if (inner.common) {
             lines = lines.concat(inner.common);
           } else {
             conflict = true;
-            lines = lines.concat(["\n<<<<<<<<<\n"], inner.file1,
-                       ["\n=========\n"], inner.file2,
-                       ["\n>>>>>>>>>\n"]);
+            lines = lines.concat(['\n<<<<<<<<<\n'], inner.file1,
+                       ['\n=========\n'], inner.file2,
+                       ['\n>>>>>>>>>\n']);
           }
         }
       }
     }
-    return {"conflict": conflict,
-            "result": lines};
+    return {'conflict': conflict,
+            'result': lines};
   }
 };
 
-exports.diff = diff;
