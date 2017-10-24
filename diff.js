@@ -268,7 +268,7 @@ var diff = {
     }
     for (i = 0; i < m1.length; i++) { addHunk(m1[i], 0); }
     for (i = 0; i < m2.length; i++) { addHunk(m2[i], 2); }
-    hunks.sort();
+    hunks.sort(function (x, y) { return x[0] - y[0] });
 
     var result = [];
     var commonOffset = 0;
