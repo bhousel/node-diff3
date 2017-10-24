@@ -1,0 +1,6 @@
+.DS_Store
+.nyc_output/
+coverage/
+index.umd.js
+node_modules/
+npm-debug.log

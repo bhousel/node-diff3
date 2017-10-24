@@ -1,0 +1,8 @@
+.DS_Store
+.travis.yml
+.nyc_output/
+coverage/
+node_modules/
+npm-debug.log
+RELEASE.md
+test/
