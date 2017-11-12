@@ -1,9 +1,8 @@
 [![Build Status](https://secure.travis-ci.org/bhousel/node-diff3.svg)](http://travis-ci.org/bhousel/node-diff3)
 [![Coverage Status](https://coveralls.io/repos/github/bhousel/node-diff3/badge.svg?branch=master)](https://coveralls.io/github/bhousel/node-diff3?branch=master)
+[![Greenkeeper badge](https://badges.greenkeeper.io/bhousel/node-diff3.svg)](https://greenkeeper.io/)
 
 ## node-diff3
-
-[![Greenkeeper badge](https://badges.greenkeeper.io/bhousel/node-diff3.svg)](https://greenkeeper.io/)
 
 This is a node.js library for text diffing and three-way-merge.
 
