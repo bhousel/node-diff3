@@ -3,6 +3,8 @@
 
 ## node-diff3
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/bhousel/node-diff3.svg)](https://greenkeeper.io/)
+
 This is a node.js library for text diffing and three-way-merge.
 
 It originally came from project Synchrotron, created by Tony Garnock-Jones.
