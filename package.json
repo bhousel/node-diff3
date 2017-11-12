@@ -14,9 +14,9 @@
   "module": "index.mjs",
   "dependencies": {},
   "devDependencies": {
-    "coveralls": "^2.13.0",
-    "eslint": "^3.19.0",
-    "rollup": "0.50.0",
+    "coveralls": "^3.0.0",
+    "eslint": "^4.11.0",
+    "rollup": "0.51.5",
     "tap": "^10.7.0"
   },
   "engines": {
