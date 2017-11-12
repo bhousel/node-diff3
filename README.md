@@ -12,6 +12,7 @@ For more detail please visit:
 - http://homepages.kcbbs.gen.nz/tonyg/projects/synchrotron.html
 - https://github.com/tonyg/synchrotron
 
+
 ### Usage
 
 * **patch: function (file, patch)**
