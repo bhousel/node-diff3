@@ -16,7 +16,7 @@
   "devDependencies": {
     "coveralls": "^3.0.0",
     "eslint": "^4.11.0",
-    "rollup": "0.51.8",
+    "rollup": "0.52.0",
     "tap": "^10.7.0"
   },
   "engines": {
