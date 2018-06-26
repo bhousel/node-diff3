@@ -1,9 +1,8 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(factory((global.Diff3 = {})));
+typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+typeof define === 'function' && define.amd ? define(['exports'], factory) :
+(factory((global.Diff3 = {})));
 }(this, (function (exports) {
-
 // Text diff algorithm following Hunt and McIlroy 1976.
 // J. W. Hunt and M. D. McIlroy, An algorithm for differential file
 // comparison, Bell Telephone Laboratories CSTR #41 (1976)
