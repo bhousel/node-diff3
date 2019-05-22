@@ -1,5 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/bhousel/node-diff3.svg)](http://travis-ci.org/bhousel/node-diff3)
-[![Coverage Status](https://coveralls.io/repos/github/bhousel/node-diff3/badge.svg?branch=master)](https://coveralls.io/github/bhousel/node-diff3?branch=master)
+[![Build Status](https://travis-ci.org/bhousel/node-diff3.svg?branch=master)](https://travis-ci.org/bhousel/node-diff3)
 [![Greenkeeper badge](https://badges.greenkeeper.io/bhousel/node-diff3.svg)](https://greenkeeper.io/)
 
 ## node-diff3
