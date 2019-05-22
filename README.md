@@ -1,3 +1,4 @@
+[![npm version](https://badge.fury.io/js/node-diff3.svg)](https://badge.fury.io/js/node-diff3)
 [![Build Status](https://travis-ci.org/bhousel/node-diff3.svg?branch=master)](https://travis-ci.org/bhousel/node-diff3)
 [![Greenkeeper badge](https://badges.greenkeeper.io/bhousel/node-diff3.svg)](https://greenkeeper.io/)
 
