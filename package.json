@@ -15,7 +15,7 @@
   "dependencies": {},
   "devDependencies": {
     "coveralls": "^3.0.3",
-    "eslint": "^5.16.0",
+    "eslint": "^6.0.0",
     "rollup": "^1.12.3",
     "tap": "^14.1.7"
   },
