@@ -12,19 +12,18 @@
   ],
   "main": "index.js",
   "module": "index.mjs",
-  "dependencies": {},
   "devDependencies": {
-    "coveralls": "^3.0.3",
-    "eslint": "^5.16.0",
-    "rollup": "^1.12.3",
-    "tap": "^14.1.7"
-  },
-  "engines": {
-    "node": ">=8.0.0"
+    "coveralls": "^3.0.6",
+    "eslint": "^6.5.0",
+    "rollup": "^1.22.0",
+    "tap": "^14.6.0"
   },
   "scripts": {
     "build": "rollup -f umd -n Diff3 index.mjs --no-indent --no-strict -o index.js",
     "lint": "eslint index.mjs test/*.js",
     "test": "npm run lint && npm run build && tap --cov test/*.js"
+  },
+  "engines": {
+    "node": ">=8.10.0"
   }
 }
