@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "repository": "bhousel/node-diff3",
-  "author": "Bryan Housel <bryan@mapbox.com>",
+  "author": "Bryan Housel <bhousel@gmail.com>",
   "description": "A node.js module for text diffing and three-way-merge.",
   "keywords": [
     "diff",
@@ -13,10 +13,10 @@
   "main": "index.js",
   "module": "index.mjs",
   "devDependencies": {
-    "coveralls": "^3.0.6",
-    "eslint": "^6.5.0",
+    "coveralls": "^3.0.9",
+    "eslint": "^6.8.0",
     "rollup": "^2.0.6",
-    "tap": "^14.6.0"
+    "tap": "^14.10.6"
   },
   "scripts": {
     "build": "rollup -f umd -n Diff3 index.mjs --no-indent --no-strict -o index.js",
