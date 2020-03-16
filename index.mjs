@@ -14,51 +14,52 @@ export {
 
 
 // Text diff algorithm following Hunt and McIlroy 1976.
-// J. W. Hunt and M. D. McIlroy, An algorithm for differential file
+// J. W. Hunt and M. D. McIlroy, An algorithm for differential buffer
 // comparison, Bell Telephone Laboratories CSTR #41 (1976)
 // http://www.cs.dartmouth.edu/~doug/
+// https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 //
-// Expects two arrays of strings.
-function LCS(file1, file2) {
+// Expects two arrays, finds longest common sequence
+function LCS(buffer1, buffer2) {
   var equivalenceClasses;
-  var file2indices;
+  var buffer2indices;
   var newCandidate;
   var candidates;
-  var line;
+  var item;
   var c, i, j, jX, r, s;
 
   equivalenceClasses = {};
-  for (j = 0; j < file2.length; j++) {
-    line = file2[j];
-    if (equivalenceClasses[line]) {
-      equivalenceClasses[line].push(j);
+  for (j = 0; j < buffer2.length; j++) {
+    item = buffer2[j];
+    if (equivalenceClasses[item]) {
+      equivalenceClasses[item].push(j);
     } else {
-      equivalenceClasses[line] = [j];
+      equivalenceClasses[item] = [j];
     }
   }
 
   candidates = [
-    { file1index: -1, file2index: -1, chain: null }
+    { buffer1index: -1, buffer2index: -1, chain: null }
   ];
 
-  for (i = 0; i < file1.length; i++) {
-    line = file1[i];
-    file2indices = equivalenceClasses[line] || [];
+  for (i = 0; i < buffer1.length; i++) {
+    item = buffer1[i];
+    buffer2indices = equivalenceClasses[item] || [];
 
     r = 0;
     c = candidates[0];
 
-    for (jX = 0; jX < file2indices.length; jX++) {
-      j = file2indices[jX];
+    for (jX = 0; jX < buffer2indices.length; jX++) {
+      j = buffer2indices[jX];
 
       for (s = r; s < candidates.length; s++) {
-        if ((candidates[s].file2index < j) && ((s === candidates.length - 1) || (candidates[s + 1].file2index > j))) {
+        if ((candidates[s].buffer2index < j) && ((s === candidates.length - 1) || (candidates[s + 1].buffer2index > j))) {
           break;
         }
       }
 
       if (s < candidates.length) {
-        newCandidate = { file1index: i, file2index: j, chain: candidates[s] };
+        newCandidate = { buffer1index: i, buffer2index: j, chain: candidates[s] };
         if (r === candidates.length) {
           candidates.push(c);
         } else {
@@ -83,11 +84,11 @@ function LCS(file1, file2) {
 
 
 // We apply the LCS to build a 'comm'-style picture of the
-// differences between file1 and file2.
-function diffComm(file1, file2) {
+// differences between buffer1 and buffer2.
+function diffComm(buffer1, buffer2) {
   var result = [];
-  var tail1 = file1.length;
-  var tail2 = file2.length;
+  var tail1 = buffer1.length;
+  var tail2 = buffer2.length;
   var common = {common: []};
 
   function processCommon() {
@@ -98,29 +99,26 @@ function diffComm(file1, file2) {
     }
   }
 
-  for (var candidate = LCS(file1, file2);
-       candidate !== null;
-       candidate = candidate.chain)
-  {
-    var different = {file1: [], file2: []};
+  for (var candidate = LCS(buffer1, buffer2); candidate !== null; candidate = candidate.chain) {
+    var different = {buffer1: [], buffer2: []};
 
-    while (--tail1 > candidate.file1index) {
-      different.file1.push(file1[tail1]);
+    while (--tail1 > candidate.buffer1index) {
+      different.buffer1.push(buffer1[tail1]);
     }
 
-    while (--tail2 > candidate.file2index) {
-      different.file2.push(file2[tail2]);
+    while (--tail2 > candidate.buffer2index) {
+      different.buffer2.push(buffer2[tail2]);
     }
 
-    if (different.file1.length || different.file2.length) {
+    if (different.buffer1.length || different.buffer2.length) {
       processCommon();
-      different.file1.reverse();
-      different.file2.reverse();
+      different.buffer1.reverse();
+      different.buffer2.reverse();
       result.push(different);
     }
 
     if (tail1 >= 0) {
-      common.common.push(file1[tail1]);
+      common.common.push(buffer1[tail1]);
     }
   }
 
@@ -131,17 +129,17 @@ function diffComm(file1, file2) {
 }
 
 
-// We apply the LCD to build a JSON representation of a
+// We apply the LCS to build a JSON representation of a
 // diff(1)-style patch.
-function diffPatch(file1, file2) {
+function diffPatch(buffer1, buffer2) {
   var result = [];
-  var tail1 = file1.length;
-  var tail2 = file2.length;
+  var tail1 = buffer1.length;
+  var tail2 = buffer2.length;
 
-  function chunkDescription(file, offset, length) {
+  function chunkDescription(buffer, offset, length) {
     var chunk = [];
     for (var i = 0; i < length; i++) {
-      chunk.push(file[offset + i]);
+      chunk.push(buffer[offset + i]);
     }
     return {
       offset: offset,
@@ -150,19 +148,16 @@ function diffPatch(file1, file2) {
     };
   }
 
-  for (var candidate = LCS(file1, file2);
-       candidate !== null;
-       candidate = candidate.chain)
-  {
-    var mismatchLength1 = tail1 - candidate.file1index - 1;
-    var mismatchLength2 = tail2 - candidate.file2index - 1;
-    tail1 = candidate.file1index;
-    tail2 = candidate.file2index;
+  for (var candidate = LCS(buffer1, buffer2); candidate !== null; candidate = candidate.chain) {
+    var mismatchLength1 = tail1 - candidate.buffer1index - 1;
+    var mismatchLength2 = tail2 - candidate.buffer2index - 1;
+    tail1 = candidate.buffer1index;
+    tail2 = candidate.buffer2index;
 
     if (mismatchLength1 || mismatchLength2) {
       result.push({
-        file1: chunkDescription(file1, candidate.file1index + 1, mismatchLength1),
-        file2: chunkDescription(file2, candidate.file2index + 1, mismatchLength2)
+        buffer1: chunkDescription(buffer1, candidate.buffer1index + 1, mismatchLength1),
+        buffer2: chunkDescription(buffer2, candidate.buffer2index + 1, mismatchLength2)
       });
     }
   }
@@ -180,8 +175,8 @@ function stripPatch(patch) {
   for (var i = 0; i < patch.length; i++) {
     var chunk = patch[i];
     newpatch.push({
-      file1: { offset: chunk.file1.offset, length: chunk.file1.length },
-      file2: { chunk: chunk.file2.chunk }
+      buffer1: { offset: chunk.buffer1.offset, length: chunk.buffer1.length },
+      buffer2: { chunk: chunk.buffer2.chunk }
     });
   }
   return newpatch;
@@ -189,69 +184,66 @@ function stripPatch(patch) {
 
 
 // Takes the output of diffPatch(), and inverts the
-// sense of it, so that it can be applied to file2 to give
-// file1 rather than the other way around.
+// sense of it, so that it can be applied to buffer2 to give
+// buffer1 rather than the other way around.
 function invertPatch(patch) {
   for (var i = 0; i < patch.length; i++) {
     var chunk = patch[i];
-    var tmp = chunk.file1;
-    chunk.file1 = chunk.file2;
-    chunk.file2 = tmp;
+    var tmp = chunk.buffer1;
+    chunk.buffer1 = chunk.buffer2;
+    chunk.buffer2 = tmp;
   }
 }
 
 
-// Applies a patch to a file.
+// Applies a patch to a buffer.
 //
-// Given file1 and file2,
-//   patch(file1, diffPatch(file1, file2))
-// should give file2.
-function patch(file, patch) {
+// Given buffer1 and buffer2,
+//   patch(buffer1, diffPatch(buffer1, buffer2))
+// should give buffer2.
+function patch(buffer, patch) {
   var result = [];
   var commonOffset = 0;
 
   function copyCommon(targetOffset) {
     while (commonOffset < targetOffset) {
-      result.push(file[commonOffset]);
+      result.push(buffer[commonOffset]);
       commonOffset++;
     }
   }
 
   for (var chunkIndex = 0; chunkIndex < patch.length; chunkIndex++) {
     var chunk = patch[chunkIndex];
-    copyCommon(chunk.file1.offset);
-    for (var lineIndex = 0; lineIndex < chunk.file2.chunk.length; lineIndex++) {
-      result.push(chunk.file2.chunk[lineIndex]);
+    copyCommon(chunk.buffer1.offset);
+    for (var itemIndex = 0; itemIndex < chunk.buffer2.chunk.length; itemIndex++) {
+      result.push(chunk.buffer2.chunk[itemIndex]);
     }
-    commonOffset += chunk.file1.length;
+    commonOffset += chunk.buffer1.length;
   }
 
-  copyCommon(file.length);
+  copyCommon(buffer.length);
   return result;
 }
 
 
 // We apply the LCS to give a simple representation of the
 // offsets and lengths of mismatched chunks in the input
-// files. This is used by diff3MergeIndices below.
-function diffIndices(file1, file2) {
+// buffers. This is used by diff3MergeIndices below.
+function diffIndices(buffer1, buffer2) {
   var result = [];
-  var tail1 = file1.length;
-  var tail2 = file2.length;
+  var tail1 = buffer1.length;
+  var tail2 = buffer2.length;
 
-  for (var candidate = LCS(file1, file2);
-     candidate !== null;
-     candidate = candidate.chain)
-  {
-    var mismatchLength1 = tail1 - candidate.file1index - 1;
-    var mismatchLength2 = tail2 - candidate.file2index - 1;
-    tail1 = candidate.file1index;
-    tail2 = candidate.file2index;
+  for (var candidate = LCS(buffer1, buffer2); candidate !== null; candidate = candidate.chain) {
+    var mismatchLength1 = tail1 - candidate.buffer1index - 1;
+    var mismatchLength2 = tail2 - candidate.buffer2index - 1;
+    tail1 = candidate.buffer1index;
+    tail2 = candidate.buffer2index;
 
     if (mismatchLength1 || mismatchLength2) {
       result.push({
-        file1: [tail1 + 1, mismatchLength1],
-        file2: [tail2 + 1, mismatchLength2]
+        buffer1: [tail1 + 1, mismatchLength1],
+        buffer2: [tail2 + 1, mismatchLength2]
       });
     }
   }
@@ -261,7 +253,7 @@ function diffIndices(file1, file2) {
 }
 
 
-// Given three files, A, O, and B, where both A and B are
+// Given three buffers, A, O, and B, where both A and B are
 // independently derived from O, returns a fairly complicated
 // internal representation of merge decisions it's taken. The
 // interested reader may wish to consult
@@ -272,14 +264,27 @@ function diffIndices(file1, file2) {
 // Computer Science (FSTTCS), December 2007.
 //
 // (http://www.cis.upenn.edu/~bcpierce/papers/diff3-short.pdf)
+//
+//
+// Returns an Array of hunk results.
+//   a "keep" result looks like:
+//    [ buffer, start, length ]  where buffer 0=a, 1=o, 2=b
+//   a "conflict" result looks like:
+//    [ -1, aStart, aLength, regionStart, regionLength, bStart, bLength]
+//
+//
 function diff3MergeIndices(a, o, b) {
   var i;
   var m1 = diffIndices(o, a);
   var m2 = diffIndices(o, b);
 
+debugger;
+  // First the hunks are prepared in a hunk array.
+  // [oPosition, side, oLength, sidePosition, sideLength]  where side 0=a, 2=b
+
   var hunks = [];
   function addHunk(h, side) {
-    hunks.push([h.file1[0], side, h.file1[1], h.file2[0], h.file2[1]]);
+    hunks.push([h.buffer1[0], side, h.buffer1[1], h.buffer2[0], h.buffer2[1]]);
   }
   for (i = 0; i < m1.length; i++) { addHunk(m1[i], 0); }
   for (i = 0; i < m2.length; i++) { addHunk(m2[i], 2); }
@@ -359,11 +364,11 @@ function diff3MergeIndices(a, o, b) {
 
 
 // Applies the output of diff3MergeIndices to actually
-// construct the merged file; the returned result alternates
+// construct the merged buffer; the returned result alternates
 // between 'ok' and 'conflict' blocks.
 function diff3Merge(a, o, b, excludeFalseConflicts) {
   var result = [];
-  var files = [a, o, b];
+  var buffers = [a, o, b];
   var indices = diff3MergeIndices(a, o, b);
 
   var okLines = [];
@@ -396,7 +401,7 @@ function diff3Merge(a, o, b, excludeFalseConflicts) {
     var side = x[0];
     if (side === -1) {
       if (excludeFalseConflicts && !isTrueConflict(x)) {
-        pushOk(files[0].slice(x[1], x[1] + x[2]));
+        pushOk(buffers[0].slice(x[1], x[1] + x[2]));
       } else {
         flushOk();
         result.push({
@@ -411,7 +416,7 @@ function diff3Merge(a, o, b, excludeFalseConflicts) {
         });
       }
     } else {
-      pushOk(files[side].slice(x[1], x[1] + x[2]));
+      pushOk(buffers[side].slice(x[1], x[1] + x[2]));
     }
   }
 
@@ -461,8 +466,8 @@ function mergeDigIn(a, o, b) {
         } else {
           conflict = true;
           lines = lines.concat(
-            ['\n<<<<<<<<<\n'], inner.file1,
-            ['\n=========\n'], inner.file2,
+            ['\n<<<<<<<<<\n'], inner.buffer1,
+            ['\n=========\n'], inner.buffer2,
             ['\n>>>>>>>>>\n']
           );
         }

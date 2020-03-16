@@ -8,10 +8,10 @@ test('Diff3', function(t) {
     }
 
     t.test('performs diff3 merge', function(t) {
-        var o = split('AA ZZ 00 M 99'),
-            a = split('AA a b c ZZ new 00 a a M 99'),
-            b = split('AA a d c ZZ 11 M z z 99'),
-            res = Diff3.diff3Merge(a, o, b);
+        var o = split('AA ZZ 00 M 99');
+        var a = split('AA a b c ZZ new 00 a a M 99');
+        var b = split('AA a d c ZZ 11 M z z 99');
+        var res = Diff3.diff3Merge(a, o, b);
 
         /*
         AA
@@ -65,10 +65,10 @@ test('Diff3', function(t) {
 
 
     t.test('can include false conflicts', function(t) {
-        var o = split('AA ZZ'),
-            a = split('AA a b c ZZ'),
-            b = split('AA a b c ZZ'),
-            res = Diff3.diff3Merge(a, o, b, false);
+        var o = split('AA ZZ');
+        var a = split('AA a b c ZZ');
+        var b = split('AA a b c ZZ');
+        var res = Diff3.diff3Merge(a, o, b, false);
 
         t.same(res[0].ok, ['AA']);
         t.same(res[0].conflict, undefined);
@@ -85,10 +85,10 @@ test('Diff3', function(t) {
 
 
     t.test('can exclude false conflicts', function(t) {
-        var o = split('AA ZZ'),
-            a = split('AA a b c ZZ'),
-            b = split('AA a b c ZZ'),
-            res = Diff3.diff3Merge(a, o, b, true);
+        var o = split('AA ZZ');
+        var a = split('AA a b c ZZ');
+        var b = split('AA a b c ZZ');
+        var res = Diff3.diff3Merge(a, o, b, true);
 
         t.same(res[0].ok, ['AA', 'a', 'b', 'c', 'ZZ']);
         t.same(res[0].conflict, undefined);
@@ -97,11 +97,11 @@ test('Diff3', function(t) {
 
 
     t.test('avoids improper hunk sorting - see openstreetmap/iD#3058', function(t) {
-        var a = ['n4100522632', 'n4100697091', 'n4100697136', 'n-10000', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4102677890', 'n4094374176'],
-            o = ['n4100522632', 'n4100697091', 'n4100697136', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4102677890', 'n4094374176'],
-            b = ['n4100522632', 'n4100697091', 'n4100697136', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4105613618', 'n4102677890', 'n4105613617', 'n4094374176'],
-            expected = ['n4100522632', 'n4100697091', 'n4100697136', 'n-10000', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4105613618', 'n4102677890', 'n4105613617', 'n4094374176'],
-            res = Diff3.diff3Merge(a, o, b);
+        var a = ['n4100522632', 'n4100697091', 'n4100697136', 'n-10000', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4102677890', 'n4094374176'];
+        var o = ['n4100522632', 'n4100697091', 'n4100697136', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4102677890', 'n4094374176'];
+        var b = ['n4100522632', 'n4100697091', 'n4100697136', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4105613618', 'n4102677890', 'n4105613617', 'n4094374176'];
+        var expected = ['n4100522632', 'n4100697091', 'n4100697136', 'n-10000', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4105613618', 'n4102677890', 'n4105613617', 'n4094374176'];
+        var res = Diff3.diff3Merge(a, o, b);
 
         t.same(res[0].ok, expected);
         t.end();
