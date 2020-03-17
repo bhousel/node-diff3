@@ -24,6 +24,6 @@
     "test": "npm run lint && npm run build && tap --cov test/*.js"
   },
   "engines": {
-    "node": ">=8.10.0"
+    "node": ">=10"
   }
 }

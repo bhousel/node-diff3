@@ -62,9 +62,39 @@ test('Diff3', function(t) {
 
       t.same(res[4].ok, ['M', 'z', 'z', '99']);
       t.same(res[4].conflict, undefined);
+
       t.end();
     });
 
+/*
+    t.test('correct boundary placement when regions overlap - issue #9', function(t) {
+      const o = 'was touring';
+      const a = 'was here touring';
+      const b = 'was into touring';
+      const res = Diff3.diff3Merge(a, o, b);
+
+      t.same(res[0].ok, ['w', 'a', 's', ' ']);
+      t.same(res[0].conflict, undefined);
+
+      t.same(res[1].ok, undefined);
+      t.same(res[1].conflict.o, '');
+      t.same(res[1].conflict.a, 'here ');
+      t.same(res[1].conflict.b, 'in');
+
+      t.same(res[2].ok, ['t', 'o']);
+      t.same(res[2].conflict, undefined);
+
+      t.same(res[3].ok, undefined);
+      t.same(res[3].conflict.o, '');
+      t.same(res[3].conflict.a, '');
+      t.same(res[3].conflict.b, ' to');
+
+      t.same(res[4].ok, ['u', 'r', 'i', 'n', 'g']);
+      t.same(res[4].conflict, undefined);
+
+      t.end();
+    });
+*/
 
     t.test('can include false conflicts', function(t) {
       const o = split('AA ZZ');
