@@ -267,9 +267,9 @@ function diffIndices(buffer1, buffer2) {
 //
 //
 // Returns an Array of hunk results.
-//   a "keep" result looks like:
+//   "ok" result looks like:
 //    [ buffer, start, length ]  where buffer 0=a, 1=o, 2=b
-//   a "conflict" result looks like:
+//   "conflict" result looks like:
 //    [ -1, aStart, aLength, regionStart, regionLength, bStart, bLength]
 //
 //
@@ -278,7 +278,6 @@ function diff3MergeIndices(a, o, b) {
   var m1 = diffIndices(o, a);
   var m2 = diffIndices(o, b);
 
-debugger;
   // First the hunks are prepared in a hunk array.
   // [oPosition, side, oLength, sidePosition, sideLength]  where side 0=a, 2=b
 
