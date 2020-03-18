@@ -21,16 +21,10 @@ export {
 //
 // Expects two arrays, finds longest common sequence
 function LCS(buffer1, buffer2) {
-  let equivalenceClasses;
-  let buffer2indices;
-  let newCandidate;
-  let candidates;
-  let item;
-  let c, i, j, jX, r, s;
 
-  equivalenceClasses = {};
-  for (j = 0; j < buffer2.length; j++) {
-    item = buffer2[j];
+  let equivalenceClasses = {};
+  for (let j = 0; j < buffer2.length; j++) {
+    const item = buffer2[j];
     if (equivalenceClasses[item]) {
       equivalenceClasses[item].push(j);
     } else {
@@ -38,20 +32,18 @@ function LCS(buffer1, buffer2) {
     }
   }
 
-  candidates = [
-    { buffer1index: -1, buffer2index: -1, chain: null }
-  ];
+  let candidates = [{ buffer1index: -1, buffer2index: -1, chain: null }];
 
-  for (i = 0; i < buffer1.length; i++) {
-    item = buffer1[i];
-    buffer2indices = equivalenceClasses[item] || [];
+  for (let i = 0; i < buffer1.length; i++) {
+    const item = buffer1[i];
+    const buffer2indices = equivalenceClasses[item] || [];
+    let r = 0;
+    let c = candidates[0];
 
-    r = 0;
-    c = candidates[0];
+    for (let jx = 0; jx < buffer2indices.length; jx++) {
+      const j = buffer2indices[jx];
 
-    for (jX = 0; jX < buffer2indices.length; jX++) {
-      j = buffer2indices[jX];
-
+      let s;
       for (s = r; s < candidates.length; s++) {
         if ((candidates[s].buffer2index < j) && ((s === candidates.length - 1) || (candidates[s + 1].buffer2index > j))) {
           break;
@@ -59,7 +51,7 @@ function LCS(buffer1, buffer2) {
       }
 
       if (s < candidates.length) {
-        newCandidate = { buffer1index: i, buffer2index: j, chain: candidates[s] };
+        const newCandidate = { buffer1index: i, buffer2index: j, chain: candidates[s] };
         if (r === candidates.length) {
           candidates.push(c);
         } else {
@@ -86,6 +78,7 @@ function LCS(buffer1, buffer2) {
 // We apply the LCS to build a 'comm'-style picture of the
 // differences between buffer1 and buffer2.
 function diffComm(buffer1, buffer2) {
+  const lcs = LCS(buffer1, buffer2);
   let result = [];
   let tail1 = buffer1.length;
   let tail2 = buffer2.length;
@@ -99,7 +92,7 @@ function diffComm(buffer1, buffer2) {
     }
   }
 
-  for (let candidate = LCS(buffer1, buffer2); candidate !== null; candidate = candidate.chain) {
+  for (let candidate = lcs; candidate !== null; candidate = candidate.chain) {
     let different = {buffer1: [], buffer2: []};
 
     while (--tail1 > candidate.buffer1index) {
@@ -133,11 +126,12 @@ function diffComm(buffer1, buffer2) {
 // offsets and lengths of mismatched chunks in the input
 // buffers. This is used by diff3MergeRegions.
 function diffIndices(buffer1, buffer2) {
+  const lcs = LCS(buffer1, buffer2);
   let result = [];
   let tail1 = buffer1.length;
   let tail2 = buffer2.length;
 
-  for (let candidate = LCS(buffer1, buffer2); candidate !== null; candidate = candidate.chain) {
+  for (let candidate = lcs; candidate !== null; candidate = candidate.chain) {
     const mismatchLength1 = tail1 - candidate.buffer1index - 1;
     const mismatchLength2 = tail2 - candidate.buffer2index - 1;
     tail1 = candidate.buffer1index;
@@ -146,7 +140,9 @@ function diffIndices(buffer1, buffer2) {
     if (mismatchLength1 || mismatchLength2) {
       result.push({
         buffer1: [tail1 + 1, mismatchLength1],
-        buffer2: [tail2 + 1, mismatchLength2]
+        buffer1Content: buffer1.slice(tail1 + 1, tail1 + 1 + mismatchLength1),
+        buffer2: [tail2 + 1, mismatchLength2],
+        buffer2Content: buffer2.slice(tail2 + 1, tail2 + 1 + mismatchLength2)
       });
     }
   }
@@ -159,6 +155,7 @@ function diffIndices(buffer1, buffer2) {
 // We apply the LCS to build a JSON representation of a
 // diff(1)-style patch.
 function diffPatch(buffer1, buffer2) {
+  const lcs = LCS(buffer1, buffer2);
   let result = [];
   let tail1 = buffer1.length;
   let tail2 = buffer2.length;
@@ -175,7 +172,7 @@ function diffPatch(buffer1, buffer2) {
     };
   }
 
-  for (let candidate = LCS(buffer1, buffer2); candidate !== null; candidate = candidate.chain) {
+  for (let candidate = lcs; candidate !== null; candidate = candidate.chain) {
     const mismatchLength1 = tail1 - candidate.buffer1index - 1;
     const mismatchLength2 = tail2 - candidate.buffer2index - 1;
     tail1 = candidate.buffer1index;
@@ -208,12 +205,6 @@ function diffPatch(buffer1, buffer2) {
 //
 function diff3MergeRegions(a, o, b) {
 
-console.log(' ');
-console.log('diff3MergeRegions:');
-console.log('o: ' + o);
-console.log('a: ' + a);
-console.log('b: ' + b);
-
   // "hunks" are array subsets where `a` or `b` are different from `o`
   // https://www.gnu.org/software/diffutils/manual/html_node/diff3-Hunks.html
   let hunks = [];
@@ -232,11 +223,6 @@ console.log('b: ' + b);
   diffIndices(o, a).forEach(item => addHunk(item, 'a'));
   diffIndices(o, b).forEach(item => addHunk(item, 'b'));
   hunks.sort((x,y) => x.oStart - y.oStart);
-
-console.log(' ');
-console.log('diff3MergeRegions hunks (length ' + hunks.length + '):');
-hunks.forEach(h => console.log(JSON.stringify(h)));
-
 
   let results = [];
   let currOffset = 0;
@@ -330,10 +316,6 @@ hunks.forEach(h => console.log(JSON.stringify(h)));
 
   advanceTo(o.length);
 
-console.log(' ');
-console.log('diff3MergeRegions results:');
-console.log(results);
-
   return results;
 }
 
@@ -342,7 +324,21 @@ console.log(results);
 // construct the merged buffer; the returned result alternates
 // between 'ok' and 'conflict' blocks.
 // A "false conflict" is where `a` and `b` both change the same from `o`
-function diff3Merge(a, o, b, excludeFalseConflicts) {
+function diff3Merge(a, o, b, options) {
+  let defaults = {
+    excludeFalseConflicts: true,
+    stringSeparator: ' '
+  };
+  options = Object.assign(defaults, options);
+
+  const aString = (typeof a === 'string');
+  const oString = (typeof o === 'string');
+  const bString = (typeof b === 'string');
+
+  if (aString) a = a.split(options.stringSeparator);
+  if (oString) o = o.split(options.stringSeparator);
+  if (bString) b = b.split(options.stringSeparator);
+
   let results = [];
   const regions = diff3MergeRegions(a, o, b);
 
@@ -366,7 +362,7 @@ function diff3Merge(a, o, b, excludeFalseConflicts) {
     if (region.stable) {
       okBuffer.push(...region.bufferContent);
     } else {
-      if (excludeFalseConflicts && isFalseConflict(region.aContent, region.bContent)) {
+      if (options.excludeFalseConflicts && isFalseConflict(region.aContent, region.bContent)) {
         okBuffer.push(...region.aContent);
       } else {
         flushOk();
@@ -389,8 +385,14 @@ function diff3Merge(a, o, b, excludeFalseConflicts) {
 }
 
 
-function merge(a, o, b) {
-  const merger = diff3Merge(a, o, b, true);
+function merge(a, o, b, options) {
+  let defaults = {
+    excludeFalseConflicts: true,
+    stringSeparator: ' '
+  };
+  options = Object.assign(defaults, options);
+
+  const merger = diff3Merge(a, o, b, options);
   let conflict = false;
   let lines = [];
   for (let i = 0; i < merger.length; i++) {
@@ -413,8 +415,14 @@ function merge(a, o, b) {
 }
 
 
-function mergeDigIn(a, o, b) {
-  const merger = diff3Merge(a, o, b, false);
+function mergeDigIn(a, o, b, options) {
+  let defaults = {
+    excludeFalseConflicts: false,
+    stringSeparator: ' '
+  };
+  options = Object.assign(defaults, options);
+
+  const merger = diff3Merge(a, o, b, options);
   let conflict = false;
   let lines = [];
   for (let i = 0; i < merger.length; i++) {

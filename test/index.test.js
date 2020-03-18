@@ -3,16 +3,12 @@ const Diff3 = require('../.');
 
 test('Diff3', function(t) {
 
-  function split(s) {
-    return s ? s.split(/ /) : [];
-  }
-
   t.test('diff3Merge', function(t) {
 
     t.test('performs diff3 merge on arrays', function(t) {
-      const o = split('AA ZZ 00 M 99');
-      const a = split('AA a b c ZZ new 00 a a M 99');
-      const b = split('AA a d c ZZ 11 M z z 99');
+      const o = 'AA ZZ 00 M 99';
+      const a = 'AA a b c ZZ new 00 a a M 99';
+      const b = 'AA a d c ZZ 11 M z z 99';
       const res = Diff3.diff3Merge(a, o, b);
 
       /*
@@ -66,41 +62,45 @@ test('Diff3', function(t) {
       t.end();
     });
 
-/*
-    t.test('correct boundary placement when regions overlap - issue #9', function(t) {
+
+    t.test('split string inputs on whitespace to avoid surprises - issue #9', function(t) {
       const o = 'was touring';
       const a = 'was here touring';
       const b = 'was into touring';
       const res = Diff3.diff3Merge(a, o, b);
 
-      t.same(res[0].ok, ['w', 'a', 's', ' ']);
+      t.same(res[0].ok, ['was']);
       t.same(res[0].conflict, undefined);
 
       t.same(res[1].ok, undefined);
-      t.same(res[1].conflict.o, '');
-      t.same(res[1].conflict.a, 'here ');
-      t.same(res[1].conflict.b, 'in');
+      t.same(res[1].conflict.o, []);
+      t.same(res[1].conflict.a, ['here']);
+      t.same(res[1].conflict.b, ['into']);
 
-      t.same(res[2].ok, ['t', 'o']);
+      t.same(res[2].ok, ['touring']);
       t.same(res[2].conflict, undefined);
-
-      t.same(res[3].ok, undefined);
-      t.same(res[3].conflict.o, '');
-      t.same(res[3].conflict.a, '');
-      t.same(res[3].conflict.b, ' to');
-
-      t.same(res[4].ok, ['u', 'r', 'i', 'n', 'g']);
-      t.same(res[4].conflict, undefined);
 
       t.end();
     });
-*/
 
-    t.test('can include false conflicts', function(t) {
-      const o = split('AA ZZ');
-      const a = split('AA a b c ZZ');
-      const b = split('AA a b c ZZ');
-      const res = Diff3.diff3Merge(a, o, b, false);
+
+    t.test('excludes false conflicts by default', function(t) {
+      const o = 'AA ZZ';
+      const a = 'AA a b c ZZ';
+      const b = 'AA a b c ZZ';
+      const res = Diff3.diff3Merge(a, o, b);
+
+      t.same(res[0].ok, ['AA', 'a', 'b', 'c', 'ZZ']);
+      t.same(res[0].conflict, undefined);
+      t.end();
+    });
+
+
+    t.test('can include false conflicts with option', function(t) {
+      const o = 'AA ZZ';
+      const a = 'AA a b c ZZ';
+      const b = 'AA a b c ZZ';
+      const res = Diff3.diff3Merge(a, o, b, { excludeFalseConflicts: false });
 
       t.same(res[0].ok, ['AA']);
       t.same(res[0].conflict, undefined);
@@ -112,18 +112,6 @@ test('Diff3', function(t) {
 
       t.same(res[2].ok, ['ZZ']);
       t.same(res[2].conflict, undefined);
-      t.end();
-    });
-
-
-    t.test('can exclude false conflicts', function(t) {
-      const o = split('AA ZZ');
-      const a = split('AA a b c ZZ');
-      const b = split('AA a b c ZZ');
-      const res = Diff3.diff3Merge(a, o, b, true);
-
-      t.same(res[0].ok, ['AA', 'a', 'b', 'c', 'ZZ']);
-      t.same(res[0].conflict, undefined);
       t.end();
     });
 
