@@ -232,7 +232,7 @@ function patch(buffer, patch) {
   var result = [];
   var currOffset = 0;
 
-  function copyUpTo(targetOffset) {
+  function advanceTo(targetOffset) {
     while (currOffset < targetOffset) {
       result.push(buffer[currOffset]);
       currOffset++;
@@ -241,14 +241,14 @@ function patch(buffer, patch) {
 
   for (var chunkIndex = 0; chunkIndex < patch.length; chunkIndex++) {
     var chunk = patch[chunkIndex];
-    copyUpTo(chunk.buffer1.offset);
+    advanceTo(chunk.buffer1.offset);
     for (var itemIndex = 0; itemIndex < chunk.buffer2.chunk.length; itemIndex++) {
       result.push(chunk.buffer2.chunk[itemIndex]);
     }
     currOffset += chunk.buffer1.length;
   }
 
-  copyUpTo(buffer.length);
+  advanceTo(buffer.length);
   return result;
 }
 
@@ -265,133 +265,131 @@ function patch(buffer, patch) {
 //
 // (http://www.cis.upenn.edu/~bcpierce/papers/diff3-short.pdf)
 //
-//
-// Returns an Array of region results.
-//   "ok" result looks like:
-//    [ buffer, start, length ]  where buffer 0=a, 1=o, 2=b
-//   "conflict" result looks like:
-//    [ -1, aStart, aLength, regionStart, regionLength, bStart, bLength]
-//
-//
 function diff3MergeRegions(a, o, b) {
 
-console.log(' ');
-console.log('diff3MergeRegions:');
-console.log('o: ' + o);
-console.log('a: ' + a);
-console.log('b: ' + b);
+// console.log(' ');
+// console.log('diff3MergeRegions:');
+// console.log('o: ' + o);
+// console.log('a: ' + a);
+// console.log('b: ' + b);
 
-  const diffa = diffIndices(o, a);
-  const diffb = diffIndices(o, b);
-
+  // "hunks" are array subsets where `a` or `b` are different from `o`
+  // https://www.gnu.org/software/diffutils/manual/html_node/diff3-Hunks.html
   var hunks = [];
   function addHunk(h, ab) {
     hunks.push({
-      oOffset: h.buffer1[0],
-      oLength: h.buffer1[1],   // length of o to remove
       ab: ab,
-      abOffset: h.buffer2[0],
+      oStart: h.buffer1[0],
+      oLength: h.buffer1[1],   // length of o to remove
+      abStart: h.buffer2[0],
       abLength: h.buffer2[1]   // length of a/b to insert
     });
   }
 
-  diffa.forEach(item => addHunk(item, 'a'));
-  diffb.forEach(item => addHunk(item, 'b'));
-  hunks.sort((x,y) => x.oOffset - y.oOffset);
+  diffIndices(o, a).forEach(item => addHunk(item, 'a'));
+  diffIndices(o, b).forEach(item => addHunk(item, 'b'));
+  hunks.sort((x,y) => x.oStart - y.oStart);
 
-console.log(' ');
-console.log('diff3MergeRegions hunks (length ' + hunks.length + '):');
-console.log(hunks);
+// console.log(' ');
+// console.log('diff3MergeRegions hunks (length ' + hunks.length + '):');
+// console.log(hunks);
 
 
   let results = [];
   let currOffset = 0;
 
-  function copyUpTo(endOffset) {
+  function advanceTo(endOffset) {
     if (endOffset > currOffset) {
-      let result = [1, currOffset, endOffset - currOffset];
-console.log('  copyUpTo pushing [' + result + ']');
-      results.push(result);
+      results.push({
+        stable: true,
+        buffer: 'o',
+        bufferStart: currOffset,
+        bufferLength: endOffset - currOffset,
+        bufferContent: o.slice(currOffset, endOffset)
+      });
       currOffset = endOffset;
     }
   }
 
-  for (let hunkIndex = 0; hunkIndex < hunks.length; hunkIndex++) {
-console.log('hunk ' + hunkIndex);
-    let startHunkIndex = hunkIndex;
-    let hunk = hunks[hunkIndex];
-    let regionStart = hunk.oOffset;
-    let regionEnd = regionStart + hunk.oLength;
-    while (hunkIndex < hunks.length - 1) {      // check if next hunk overlaps
-      let nextHunk = hunks[hunkIndex + 1];
-      let nextStart = nextHunk.oOffset;
-      if (nextStart > regionEnd) {
-        break;
-      }
-      regionEnd = Math.max(regionEnd, nextStart + nextHunk.oLength);
-      hunkIndex++;
+  while (hunks.length) {
+    let hunk = hunks.shift();
+    let regionStart = hunk.oStart;
+    let regionEnd = hunk.oStart + hunk.oLength;
+    let regionHunks = [hunk];
+    advanceTo(regionStart);
+
+    // Try to pull next overlapping hunk into this region
+    while (hunks.length) {
+      let nextHunk = hunks[0];
+      let nextHunkStart = nextHunk.oStart;
+      if (nextHunkStart > regionEnd) break;   // no overlap
+
+      regionEnd = Math.max(regionEnd, nextHunkStart + nextHunk.oLength);
+      regionHunks.push(hunks.shift());
     }
 
-    copyUpTo(regionStart);
-    if (startHunkIndex === hunkIndex) {
-      // The 'overlap' was only one hunk long, meaning that
-      // there's no conflict here. Either a and o were the
-      // same, or b and o were the same.
-console.log('  overlap?');
+    if (regionHunks.length === 1) {
+      // Only one hunk touches this region, meaning that there is no conflict here.
+      // Either `a` or `b` is inserting into a region of `o` unchanged by the other.
       if (hunk.abLength > 0) {
-
-        let result = [(hunk.ab === 'a' ? 0 : 2), hunk.abOffset, hunk.abLength];
-console.log('  overlap pushing [' + result + ']');
-        results.push(result);
+        let buffer = (hunk.ab === 'a' ? a : b);
+        results.push({
+          stable: true,
+          buffer: hunk.ab,
+          bufferStart: hunk.abStart,
+          bufferLength: hunk.abLength,
+          bufferContent: buffer.slice(hunk.abStart, hunk.abStart + hunk.abLength)
+        });
       }
     } else {
-      // A proper conflict. Determine the extents of the
-      // regions involved from a, o and b. Effectively merge
-      // all the hunks on the left into one giant hunk, and
-      // do the same for the right; then, correct for skew
-      // in the regions of o that each side changed, and
-      // report appropriate spans for the three sides.
-      var regions = {
+      // A true a/b conflict. Determine the extents involved from `a`, `o`, and `b`.
+      // Effectively merge all the `a` hunks into one giant hunk, then do the
+      // same for the `b` hunks; then, correct for skew in the regions of `o`
+      // that each side changed, and report appropriate spans for the three sides.
+      let bounds = {
         a: [a.length, -1, o.length, -1],
         b: [b.length, -1, o.length, -1]
       };
-      for (let i = startHunkIndex; i <= hunkIndex; i++) {
-        hunk = hunks[i];
-        let r = regions[hunk.ab];
-        let oStart = hunk.oOffset;
+      while (regionHunks.length) {
+        hunk = regionHunks.shift();
+        let b = bounds[hunk.ab];
+        let oStart = hunk.oStart;
         let oEnd = oStart + hunk.oLength;
-        let abStart = hunk.abOffset;
+        let abStart = hunk.abStart;
         let abEnd = abStart + hunk.abLength;
-        r[0] = Math.min(abStart, r[0]);
-        r[1] = Math.max(abEnd, r[1]);
-        r[2] = Math.min(oStart, r[2]);
-        r[3] = Math.max(oEnd, r[3]);
+        b[0] = Math.min(abStart, b[0]);
+        b[1] = Math.max(abEnd, b[1]);
+        b[2] = Math.min(oStart, b[2]);
+        b[3] = Math.max(oEnd, b[3]);
       }
 
-console.log('  conflict regions:');
-console.log('    ' + regions);
+      let aStart = bounds.a[0] + (regionStart - bounds.a[2]);
+      let aEnd = bounds.a[1] + (regionEnd - bounds.a[3]);
+      let bStart = bounds.b[0] + (regionStart - bounds.b[2]);
+      let bEnd = bounds.b[1] + (regionEnd - bounds.b[3]);
 
-      let aStart = regions.a[0] + (regionStart - regions.a[2]);
-      let aEnd = regions.a[1] + (regionEnd - regions.a[3]);
-      let bStart = regions.b[0] + (regionStart - regions.b[2]);
-      let bEnd = regions.b[1] + (regionEnd - regions.b[3]);
-
-      let result = [-1,
-        aStart,      aEnd - aStart,
-        regionStart, regionEnd - regionStart,
-        bStart,      bEnd - bStart
-      ];
-console.log('  conflict pushing [' + result + ']');
+      let result = {
+        stable: false,
+        aStart: aStart,
+        aLength: aEnd - aStart,
+        aContent: a.slice(aStart, aEnd),
+        oStart: regionStart,
+        oLength: regionEnd - regionStart,
+        oContent: o.slice(regionStart, regionEnd),
+        bStart: bStart,
+        bLength: bEnd - bStart,
+        bContent: b.slice(bStart, bEnd)
+      };
       results.push(result);
     }
     currOffset = regionEnd;
   }
 
-  copyUpTo(o.length);
+  advanceTo(o.length);
 
-console.log(' ');
-console.log('diff3MergeRegions results:');
-console.log(results);
+// console.log(' ');
+// console.log('diff3MergeRegions results:');
+// console.log(results);
 
   return results;
 }
@@ -400,62 +398,51 @@ console.log(results);
 // Applies the output of diff3MergeRegions to actually
 // construct the merged buffer; the returned result alternates
 // between 'ok' and 'conflict' blocks.
+// A "false conflict" is where `a` and `b` both change the same from `o`
 function diff3Merge(a, o, b, excludeFalseConflicts) {
-  var result = [];
-  var buffers = [a, o, b];
-  var indices = diff3MergeRegions(a, o, b);
+  let results = [];
+  const regions = diff3MergeRegions(a, o, b);
 
-  var okLines = [];
+  let okBuffer = [];
   function flushOk() {
-    if (okLines.length) {
-      result.push({ok: okLines});
+    if (okBuffer.length) {
+      results.push({ ok: okBuffer });
     }
-    okLines = [];
-  }
-  function pushOk(xs) {
-    for (var j = 0; j < xs.length; j++) {
-      okLines.push(xs[j]);
-    }
+    okBuffer = [];
   }
 
-  function isTrueConflict(region) {
-    if (region[2] !== region[6]) return true;
-    var aoff = region[1];
-    var boff = region[5];
-    for (var j = 0; j < region[2]; j++) {
-      if (a[j + aoff] !== b[j + boff]) {
-        return true;
-      }
+  function isFalseConflict(a, b) {
+    if (a.length !== b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] !== b[i]) return false;
     }
-    return false;
+    return true;
   }
 
-  for (var i = 0; i < indices.length; i++) {
-    var region = indices[i];
-    var side = region[0];
-    if (side === -1) {
-      if (excludeFalseConflicts && !isTrueConflict(region)) {
-        pushOk(buffers[0].slice(region[1], region[1] + region[2]));
+  regions.forEach(region =>  {
+    if (region.stable) {
+      okBuffer.push(...region.bufferContent);
+    } else {
+      if (excludeFalseConflicts && isFalseConflict(region.aContent, region.bContent)) {
+        okBuffer.push(...region.aContent);
       } else {
         flushOk();
-        result.push({
+        results.push({
           conflict: {
-            a: a.slice(region[1], region[1] + region[2]),
-            aIndex: region[1],
-            o: o.slice(region[3], region[3] + region[4]),
-            oIndex: region[3],
-            b: b.slice(region[5], region[5] + region[6]),
-            bIndex: region[5]
+            a: region.aContent,
+            aIndex: region.aStart,
+            o: region.oContent,
+            oIndex: region.oStart,
+            b: region.bContent,
+            bIndex: region.bStart
           }
         });
       }
-    } else {
-      pushOk(buffers[side].slice(region[1], region[1] + region[2]));
     }
-  }
+  });
 
   flushOk();
-  return result;
+  return results;
 }
 
 
