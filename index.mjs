@@ -3,13 +3,13 @@ export {
   diffComm,
   diffIndices,
   diffPatch,
-  stripPatch,
-  invertPatch,
-  patch,
   diff3MergeRegions,
   diff3Merge,
   merge,
-  mergeDigIn
+  mergeDigIn,
+  patch,
+  stripPatch,
+  invertPatch
 };
 
 
@@ -21,12 +21,12 @@ export {
 //
 // Expects two arrays, finds longest common sequence
 function LCS(buffer1, buffer2) {
-  var equivalenceClasses;
-  var buffer2indices;
-  var newCandidate;
-  var candidates;
-  var item;
-  var c, i, j, jX, r, s;
+  let equivalenceClasses;
+  let buffer2indices;
+  let newCandidate;
+  let candidates;
+  let item;
+  let c, i, j, jX, r, s;
 
   equivalenceClasses = {};
   for (j = 0; j < buffer2.length; j++) {
@@ -86,10 +86,10 @@ function LCS(buffer1, buffer2) {
 // We apply the LCS to build a 'comm'-style picture of the
 // differences between buffer1 and buffer2.
 function diffComm(buffer1, buffer2) {
-  var result = [];
-  var tail1 = buffer1.length;
-  var tail2 = buffer2.length;
-  var common = {common: []};
+  let result = [];
+  let tail1 = buffer1.length;
+  let tail2 = buffer2.length;
+  let common = {common: []};
 
   function processCommon() {
     if (common.common.length) {
@@ -99,8 +99,8 @@ function diffComm(buffer1, buffer2) {
     }
   }
 
-  for (var candidate = LCS(buffer1, buffer2); candidate !== null; candidate = candidate.chain) {
-    var different = {buffer1: [], buffer2: []};
+  for (let candidate = LCS(buffer1, buffer2); candidate !== null; candidate = candidate.chain) {
+    let different = {buffer1: [], buffer2: []};
 
     while (--tail1 > candidate.buffer1index) {
       different.buffer1.push(buffer1[tail1]);
@@ -133,13 +133,13 @@ function diffComm(buffer1, buffer2) {
 // offsets and lengths of mismatched chunks in the input
 // buffers. This is used by diff3MergeRegions.
 function diffIndices(buffer1, buffer2) {
-  var result = [];
-  var tail1 = buffer1.length;
-  var tail2 = buffer2.length;
+  let result = [];
+  let tail1 = buffer1.length;
+  let tail2 = buffer2.length;
 
-  for (var candidate = LCS(buffer1, buffer2); candidate !== null; candidate = candidate.chain) {
-    var mismatchLength1 = tail1 - candidate.buffer1index - 1;
-    var mismatchLength2 = tail2 - candidate.buffer2index - 1;
+  for (let candidate = LCS(buffer1, buffer2); candidate !== null; candidate = candidate.chain) {
+    const mismatchLength1 = tail1 - candidate.buffer1index - 1;
+    const mismatchLength2 = tail2 - candidate.buffer2index - 1;
     tail1 = candidate.buffer1index;
     tail2 = candidate.buffer2index;
 
@@ -159,13 +159,13 @@ function diffIndices(buffer1, buffer2) {
 // We apply the LCS to build a JSON representation of a
 // diff(1)-style patch.
 function diffPatch(buffer1, buffer2) {
-  var result = [];
-  var tail1 = buffer1.length;
-  var tail2 = buffer2.length;
+  let result = [];
+  let tail1 = buffer1.length;
+  let tail2 = buffer2.length;
 
   function chunkDescription(buffer, offset, length) {
-    var chunk = [];
-    for (var i = 0; i < length; i++) {
+    let chunk = [];
+    for (let i = 0; i < length; i++) {
       chunk.push(buffer[offset + i]);
     }
     return {
@@ -175,9 +175,9 @@ function diffPatch(buffer1, buffer2) {
     };
   }
 
-  for (var candidate = LCS(buffer1, buffer2); candidate !== null; candidate = candidate.chain) {
-    var mismatchLength1 = tail1 - candidate.buffer1index - 1;
-    var mismatchLength2 = tail2 - candidate.buffer2index - 1;
+  for (let candidate = LCS(buffer1, buffer2); candidate !== null; candidate = candidate.chain) {
+    const mismatchLength1 = tail1 - candidate.buffer1index - 1;
+    const mismatchLength2 = tail2 - candidate.buffer2index - 1;
     tail1 = candidate.buffer1index;
     tail2 = candidate.buffer2index;
 
@@ -190,65 +190,6 @@ function diffPatch(buffer1, buffer2) {
   }
 
   result.reverse();
-  return result;
-}
-
-
-// Takes the output of diffPatch(), and removes
-// information from it. It can still be used by patch(),
-// below, but can no longer be inverted.
-function stripPatch(patch) {
-  var newpatch = [];
-  for (var i = 0; i < patch.length; i++) {
-    var chunk = patch[i];
-    newpatch.push({
-      buffer1: { offset: chunk.buffer1.offset, length: chunk.buffer1.length },
-      buffer2: { chunk: chunk.buffer2.chunk }
-    });
-  }
-  return newpatch;
-}
-
-
-// Takes the output of diffPatch(), and inverts the
-// sense of it, so that it can be applied to buffer2 to give
-// buffer1 rather than the other way around.
-function invertPatch(patch) {
-  for (var i = 0; i < patch.length; i++) {
-    var chunk = patch[i];
-    var tmp = chunk.buffer1;
-    chunk.buffer1 = chunk.buffer2;
-    chunk.buffer2 = tmp;
-  }
-}
-
-
-// Applies a patch to a buffer.
-//
-// Given buffer1 and buffer2,
-//   `patch(buffer1, diffPatch(buffer1, buffer2))
-// should give buffer2.
-function patch(buffer, patch) {
-  var result = [];
-  var currOffset = 0;
-
-  function advanceTo(targetOffset) {
-    while (currOffset < targetOffset) {
-      result.push(buffer[currOffset]);
-      currOffset++;
-    }
-  }
-
-  for (var chunkIndex = 0; chunkIndex < patch.length; chunkIndex++) {
-    var chunk = patch[chunkIndex];
-    advanceTo(chunk.buffer1.offset);
-    for (var itemIndex = 0; itemIndex < chunk.buffer2.chunk.length; itemIndex++) {
-      result.push(chunk.buffer2.chunk[itemIndex]);
-    }
-    currOffset += chunk.buffer1.length;
-  }
-
-  advanceTo(buffer.length);
   return result;
 }
 
@@ -267,22 +208,24 @@ function patch(buffer, patch) {
 //
 function diff3MergeRegions(a, o, b) {
 
-// console.log(' ');
-// console.log('diff3MergeRegions:');
-// console.log('o: ' + o);
-// console.log('a: ' + a);
-// console.log('b: ' + b);
+console.log(' ');
+console.log('diff3MergeRegions:');
+console.log('o: ' + o);
+console.log('a: ' + a);
+console.log('b: ' + b);
 
   // "hunks" are array subsets where `a` or `b` are different from `o`
   // https://www.gnu.org/software/diffutils/manual/html_node/diff3-Hunks.html
-  var hunks = [];
+  let hunks = [];
   function addHunk(h, ab) {
+    const buffer = (ab === 'a' ? a : b);
     hunks.push({
       ab: ab,
       oStart: h.buffer1[0],
       oLength: h.buffer1[1],   // length of o to remove
       abStart: h.buffer2[0],
-      abLength: h.buffer2[1]   // length of a/b to insert
+      abLength: h.buffer2[1],   // length of a/b to insert
+      abContent: buffer.slice(h.buffer2[0], h.buffer2[0] + h.buffer2[1])
     });
   }
 
@@ -290,9 +233,9 @@ function diff3MergeRegions(a, o, b) {
   diffIndices(o, b).forEach(item => addHunk(item, 'b'));
   hunks.sort((x,y) => x.oStart - y.oStart);
 
-// console.log(' ');
-// console.log('diff3MergeRegions hunks (length ' + hunks.length + '):');
-// console.log(hunks);
+console.log(' ');
+console.log('diff3MergeRegions hunks (length ' + hunks.length + '):');
+hunks.forEach(h => console.log(JSON.stringify(h)));
 
 
   let results = [];
@@ -320,8 +263,8 @@ function diff3MergeRegions(a, o, b) {
 
     // Try to pull next overlapping hunk into this region
     while (hunks.length) {
-      let nextHunk = hunks[0];
-      let nextHunkStart = nextHunk.oStart;
+      const nextHunk = hunks[0];
+      const nextHunkStart = nextHunk.oStart;
       if (nextHunkStart > regionEnd) break;   // no overlap
 
       regionEnd = Math.max(regionEnd, nextHunkStart + nextHunk.oLength);
@@ -332,7 +275,7 @@ function diff3MergeRegions(a, o, b) {
       // Only one hunk touches this region, meaning that there is no conflict here.
       // Either `a` or `b` is inserting into a region of `o` unchanged by the other.
       if (hunk.abLength > 0) {
-        let buffer = (hunk.ab === 'a' ? a : b);
+        const buffer = (hunk.ab === 'a' ? a : b);
         results.push({
           stable: true,
           buffer: hunk.ab,
@@ -342,7 +285,7 @@ function diff3MergeRegions(a, o, b) {
         });
       }
     } else {
-      // A true a/b conflict. Determine the extents involved from `a`, `o`, and `b`.
+      // A true a/b conflict. Determine the bounds involved from `a`, `o`, and `b`.
       // Effectively merge all the `a` hunks into one giant hunk, then do the
       // same for the `b` hunks; then, correct for skew in the regions of `o`
       // that each side changed, and report appropriate spans for the three sides.
@@ -352,21 +295,21 @@ function diff3MergeRegions(a, o, b) {
       };
       while (regionHunks.length) {
         hunk = regionHunks.shift();
+        const oStart = hunk.oStart;
+        const oEnd = oStart + hunk.oLength;
+        const abStart = hunk.abStart;
+        const abEnd = abStart + hunk.abLength;
         let b = bounds[hunk.ab];
-        let oStart = hunk.oStart;
-        let oEnd = oStart + hunk.oLength;
-        let abStart = hunk.abStart;
-        let abEnd = abStart + hunk.abLength;
         b[0] = Math.min(abStart, b[0]);
         b[1] = Math.max(abEnd, b[1]);
         b[2] = Math.min(oStart, b[2]);
         b[3] = Math.max(oEnd, b[3]);
       }
 
-      let aStart = bounds.a[0] + (regionStart - bounds.a[2]);
-      let aEnd = bounds.a[1] + (regionEnd - bounds.a[3]);
-      let bStart = bounds.b[0] + (regionStart - bounds.b[2]);
-      let bEnd = bounds.b[1] + (regionEnd - bounds.b[3]);
+      const aStart = bounds.a[0] + (regionStart - bounds.a[2]);
+      const aEnd = bounds.a[1] + (regionEnd - bounds.a[3]);
+      const bStart = bounds.b[0] + (regionStart - bounds.b[2]);
+      const bEnd = bounds.b[1] + (regionEnd - bounds.b[3]);
 
       let result = {
         stable: false,
@@ -387,9 +330,9 @@ function diff3MergeRegions(a, o, b) {
 
   advanceTo(o.length);
 
-// console.log(' ');
-// console.log('diff3MergeRegions results:');
-// console.log(results);
+console.log(' ');
+console.log('diff3MergeRegions results:');
+console.log(results);
 
   return results;
 }
@@ -413,7 +356,7 @@ function diff3Merge(a, o, b, excludeFalseConflicts) {
 
   function isFalseConflict(a, b) {
     if (a.length !== b.length) return false;
-    for (var i = 0; i < a.length; i++) {
+    for (let i = 0; i < a.length; i++) {
       if (a[i] !== b[i]) return false;
     }
     return true;
@@ -447,11 +390,11 @@ function diff3Merge(a, o, b, excludeFalseConflicts) {
 
 
 function merge(a, o, b) {
-  var merger = diff3Merge(a, o, b, true);
-  var conflict = false;
-  var lines = [];
-  for (var i = 0; i < merger.length; i++) {
-    var item = merger[i];
+  const merger = diff3Merge(a, o, b, true);
+  let conflict = false;
+  let lines = [];
+  for (let i = 0; i < merger.length; i++) {
+    const item = merger[i];
     if (item.ok) {
       lines = lines.concat(item.ok);
     } else {
@@ -471,17 +414,17 @@ function merge(a, o, b) {
 
 
 function mergeDigIn(a, o, b) {
-  var merger = diff3Merge(a, o, b, false);
-  var conflict = false;
-  var lines = [];
-  for (var i = 0; i < merger.length; i++) {
-    var item = merger[i];
+  const merger = diff3Merge(a, o, b, false);
+  let conflict = false;
+  let lines = [];
+  for (let i = 0; i < merger.length; i++) {
+    const item = merger[i];
     if (item.ok) {
       lines = lines.concat(item.ok);
     } else {
-      var c = diffComm(item.conflict.a, item.conflict.b);
-      for (var j = 0; j < c.length; j++) {
-        var inner = c[j];
+      const c = diffComm(item.conflict.a, item.conflict.b);
+      for (let j = 0; j < c.length; j++) {
+        let inner = c[j];
         if (inner.common) {
           lines = lines.concat(inner.common);
         } else {
@@ -501,3 +444,61 @@ function mergeDigIn(a, o, b) {
   };
 }
 
+
+// Applies a patch to a buffer.
+//
+// Given buffer1 and buffer2,
+//   `patch(buffer1, diffPatch(buffer1, buffer2))
+// should give buffer2.
+function patch(buffer, patch) {
+  let result = [];
+  let currOffset = 0;
+
+  function advanceTo(targetOffset) {
+    while (currOffset < targetOffset) {
+      result.push(buffer[currOffset]);
+      currOffset++;
+    }
+  }
+
+  for (let chunkIndex = 0; chunkIndex < patch.length; chunkIndex++) {
+    let chunk = patch[chunkIndex];
+    advanceTo(chunk.buffer1.offset);
+    for (let itemIndex = 0; itemIndex < chunk.buffer2.chunk.length; itemIndex++) {
+      result.push(chunk.buffer2.chunk[itemIndex]);
+    }
+    currOffset += chunk.buffer1.length;
+  }
+
+  advanceTo(buffer.length);
+  return result;
+}
+
+
+// Takes the output of diffPatch(), and removes
+// information from it. It can still be used by patch(),
+// below, but can no longer be inverted.
+function stripPatch(patch) {
+  let newpatch = [];
+  for (let i = 0; i < patch.length; i++) {
+    const chunk = patch[i];
+    newpatch.push({
+      buffer1: { offset: chunk.buffer1.offset, length: chunk.buffer1.length },
+      buffer2: { chunk: chunk.buffer2.chunk }
+    });
+  }
+  return newpatch;
+}
+
+
+// Takes the output of diffPatch(), and inverts the
+// sense of it, so that it can be applied to buffer2 to give
+// buffer1 rather than the other way around.
+function invertPatch(patch) {
+  for (let i = 0; i < patch.length; i++) {
+    let chunk = patch[i];
+    const tmp = chunk.buffer1;
+    chunk.buffer1 = chunk.buffer2;
+    chunk.buffer2 = tmp;
+  }
+}
