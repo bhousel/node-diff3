@@ -21,7 +21,7 @@
   "scripts": {
     "build": "rollup -f umd -n Diff3 index.mjs --no-indent --no-strict -o index.js",
     "lint": "eslint index.mjs test/*.js",
-    "test": "npm run lint && npm run build && tap --cov test/*.js"
+    "test": "npm run lint && npm run build && tap  --reporter terse --cov test/*.js"
   },
   "engines": {
     "node": ">=10"
