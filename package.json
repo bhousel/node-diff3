@@ -10,16 +10,20 @@
     "diff3",
     "merge"
   ],
-  "main": "index.js",
+  "main": "dist/index.js",
   "module": "index.mjs",
   "devDependencies": {
+    "@rollup/plugin-buble": "^0.21.1",
     "coveralls": "^3.0.9",
     "eslint": "^6.8.0",
+    "npm-run-all": "^4.0.0",
     "rollup": "^2.0.6",
     "tap": "^14.10.6"
   },
   "scripts": {
-    "build": "rollup -f umd -n Diff3 index.mjs --no-indent --no-strict -o index.js",
+    "build": "npm-run-all -s dist:**",
+    "dist:js": "rollup --config config/rollup.config.js",
+    "dist:es5": "rollup --config config/rollup.config.es5.js",
     "lint": "eslint index.mjs test/*.js",
     "test": "npm run lint && npm run build && tap  --reporter terse --cov test/*.js"
   },
