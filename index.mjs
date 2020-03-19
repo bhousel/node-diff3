@@ -209,14 +209,13 @@ function diff3MergeRegions(a, o, b) {
   // https://www.gnu.org/software/diffutils/manual/html_node/diff3-Hunks.html
   let hunks = [];
   function addHunk(h, ab) {
-    const buffer = (ab === 'a' ? a : b);
     hunks.push({
       ab: ab,
       oStart: h.buffer1[0],
       oLength: h.buffer1[1],   // length of o to remove
       abStart: h.buffer2[0],
-      abLength: h.buffer2[1],   // length of a/b to insert
-      abContent: buffer.slice(h.buffer2[0], h.buffer2[0] + h.buffer2[1])
+      abLength: h.buffer2[1]   // length of a/b to insert
+      // abContent: (ab === 'a' ? a : b).slice(h.buffer2[0], h.buffer2[0] + h.buffer2[1])
     });
   }
 
