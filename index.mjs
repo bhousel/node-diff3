@@ -32,7 +32,8 @@ function LCS(buffer1, buffer2) {
     }
   }
 
-  let candidates = [{ buffer1index: -1, buffer2index: -1, chain: null }];
+  const NULLRESULT = { buffer1index: -1, buffer2index: -1, chain: null };
+  let candidates = [NULLRESULT];
 
   for (let i = 0; i < buffer1.length; i++) {
     const item = buffer1[i];
