@@ -3,6 +3,17 @@ const Diff3 = require('../.');
 
 test('mergeDigIn', function(t) {
 
+  t.test('returns conflict: false if no conflicts', function(t) {
+    const o = ['AA'];
+    const a = ['AA'];
+    const b = ['AA'];
+    const r = Diff3.merge(a, o, b);
+    t.false(r.conflict);
+    const result = r.result;
+    t.same(result[0], 'AA');
+    t.end();
+  });
+
   t.test('returns a digin-style merge result', function(t) {
     const o = ['AA', 'ZZ', '00', 'M', '99'];
     const a = ['AA', 'a', 'b', 'c', 'ZZ', 'new', '00', 'a', 'a', 'M', '99'];
