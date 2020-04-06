@@ -454,10 +454,7 @@ function mergeDigIn(a, o, b, options) {
 
 
 // Applies a patch to a buffer.
-//
-// Given buffer1 and buffer2,
-//   `patch(buffer1, diffPatch(buffer1, buffer2))
-// should give buffer2.
+// Given buffer1 and buffer2, `patch(buffer1, diffPatch(buffer1, buffer2))` should give buffer2.
 function patch(buffer, patch) {
   let result = [];
   let currOffset = 0;
@@ -483,30 +480,21 @@ function patch(buffer, patch) {
 }
 
 
-// Takes the output of diffPatch(), and removes
-// information from it. It can still be used by patch(),
-// below, but can no longer be inverted.
+// Takes the output of diffPatch(), and removes extra information from it. 
+// It can still be used by patch(), below, but can no longer be inverted.
 function stripPatch(patch) {
-  let newpatch = [];
-  for (let i = 0; i < patch.length; i++) {
-    const chunk = patch[i];
-    newpatch.push({
-      buffer1: { offset: chunk.buffer1.offset, length: chunk.buffer1.length },
-      buffer2: { chunk: chunk.buffer2.chunk }
-    });
-  }
-  return newpatch;
+  return patch.map(chunk => ({
+    buffer1: { offset: chunk.buffer1.offset, length: chunk.buffer1.length },
+    buffer2: { chunk: chunk.buffer2.chunk }
+  }));
 }
 
 
-// Takes the output of diffPatch(), and inverts the
-// sense of it, so that it can be applied to buffer2 to give
-// buffer1 rather than the other way around.
+// Takes the output of diffPatch(), and inverts the sense of it, so that it 
+// can be applied to buffer2 to give buffer1 rather than the other way around.
 function invertPatch(patch) {
-  for (let i = 0; i < patch.length; i++) {
-    let chunk = patch[i];
-    const tmp = chunk.buffer1;
-    chunk.buffer1 = chunk.buffer2;
-    chunk.buffer2 = tmp;
-  }
+  return patch.map(chunk => ({ 
+    buffer1: chunk.buffer2, 
+    buffer2: chunk.buffer1 
+  }));
 }
