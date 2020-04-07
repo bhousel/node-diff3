@@ -1,4 +1,12 @@
-:warning: = Breaking change
+# What's New
+
+**node-diff3** is an open source project. You can submit bug reports, help out,
+or learn more by visiting our project page on GitHub:  :octocat: https://github.com/bhousel/node-diff3
+
+Please star our project on GitHub to show your support! :star:
+
+_Breaking changes, which may affect downstream projects, are marked with a_ :warning:
+
 
 ## 1.0.0
 ##### Nov 21, 2017
