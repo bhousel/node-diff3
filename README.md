@@ -63,12 +63,13 @@ Or if you need to support older browsers like Internet Explorer, fetch the ES5 v
 * [Longest Common Sequence (LCS)](#longest-common-sequence-lcs)
   * [LCS](#LCS)
 
+
 ### 3-way diff and merging
 
 <a name="diff3Merge" href="#diff3Merge">#</a> <i>Diff3</i>.<b>diff3Merge</b>(<i>a</i>, <i>o</i>, <i>b</i>, <i>options</i>)
 
 Performs a 3-way diff on buffers `o` (original), `a`, and `b`.
-The buffers may be arrays or strings - if strings, they will be split on space `' '` by default.
+The buffers may be arrays or strings. If strings, they will be split into arrays on whitespace `/\s+/` by default.
 The returned result alternates between "ok" and "conflict" blocks.
 
 See examples: https://github.com/bhousel/node-diff3/blob/master/test/diff3Merge.test.js
@@ -84,12 +85,12 @@ Options may passed as an object:
 ```js
 {
   excludeFalseConflicts: true,
-  stringSeparator: ' '
+  stringSeparator: /\s+/
 }
 ```
 
 * `excludeFalseConflicts` - If both `a` and `b` contain the same change from `o`, this is considered a "false" conflict.
-* `stringSeparator` - If inputs are passed as strings, this controls how to split the strings into arrays.
+* `stringSeparator` - If inputs buffers are strings, this controls how to split the strings into arrays. The separator value may be a string or a regular expression, as it is just passed to [String.split()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split).
 
 
 <a name="merge" href="#merge">#</a> <i>Diff3</i>.<b>merge</b>(<i>a</i>, <i>o</i>, <i>b</i>, <i>options</i>)

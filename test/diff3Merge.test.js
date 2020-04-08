@@ -61,9 +61,9 @@ test('diff3Merge', function(t) {
   });
 
 
-  t.test('strings split on space by default to avoid surprises - issue #9', function(t) {
+  t.test('strings split on whitespace by default to avoid surprises - issue #9', function(t) {
     const o = 'was touring';
-    const a = 'was here touring';
+    const a = 'was here   touring';
     const b = 'was into touring';
     const result = Diff3.diff3Merge(a, o, b);
 
@@ -83,9 +83,9 @@ test('diff3Merge', function(t) {
 
   t.test('strings can optionally split on given separator', function(t) {
     const o = 'new hampshire, new mexico, north carolina';
-    const a = 'new hampshire, new jersey, north carolina';
+    const a = 'new hampshire, new jersey,    north carolina';
     const b = 'new hampshire, new york, north carolina';
-    const result = Diff3.diff3Merge(a, o, b, { stringSeparator: ', ' });
+    const result = Diff3.diff3Merge(a, o, b, { stringSeparator: /,\s+/ });
 
     t.same(result[0].ok, ['new hampshire']);
     t.same(result[0].conflict, undefined);

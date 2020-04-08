@@ -327,7 +327,7 @@ function diff3MergeRegions(a, o, b) {
 function diff3Merge(a, o, b, options) {
   let defaults = {
     excludeFalseConflicts: true,
-    stringSeparator: ' '
+    stringSeparator: /\s+/
   };
   options = Object.assign(defaults, options);
 
@@ -388,7 +388,7 @@ function diff3Merge(a, o, b, options) {
 function merge(a, o, b, options) {
   let defaults = {
     excludeFalseConflicts: true,
-    stringSeparator: ' '
+    stringSeparator: /\s+/
   };
   options = Object.assign(defaults, options);
 
@@ -418,7 +418,7 @@ function merge(a, o, b, options) {
 function mergeDigIn(a, o, b, options) {
   let defaults = {
     excludeFalseConflicts: false,
-    stringSeparator: ' '
+    stringSeparator: /\s+/
   };
   options = Object.assign(defaults, options);
 
