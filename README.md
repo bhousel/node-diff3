@@ -15,10 +15,12 @@ For more detail please visit:
 
 ## Usage
 
-To install this library as a dependency in another project:
-`npm install --save node-diff3`
+To install node-diff3 as a dependency in another project:
+```bash
+$  npm install --save node-diff3
+```
 
-This library is distributed in both UMD and ES6 module formats. ([read more](https://dev.to/iggredible/what-the-heck-are-cjs-amd-umd-and-esm-ikm))
+This library is distributed in both UMD and ES6 module formats for maxmimum compatibility. <sub>([read more about Javascript module formats](https://dev.to/iggredible/what-the-heck-are-cjs-amd-umd-and-esm-ikm))</sub>
 * `index.mjs`  - ES6 module
 * `dist/index.js` - UMD module, ES6 syntax
 * `dist/index.es5.js` - UMD module, ES5 syntax
@@ -33,14 +35,19 @@ import * as Diff3 from 'node-diff3';                   // ES6 import all
 import { diff3Merge } from 'node-diff3';               // ES6 import named
 ```
 
-You can also use UMD builds of node-diff3 directly in a web browser. A good way to do this is to fetch the file from the [jsDelivr CDN](https://www.jsdelivr.com/):
+You can also use node-diff3 directly in a web browser. A good way to do this is to fetch the file from the [jsDelivr CDN](https://www.jsdelivr.com/), which can even deliver minified versions:
 
-For modern ES6-capable browsers:
+The latest versions of many web browsers now support [ES6 modules in script tags](https://caniuse.com/#feat=es6-module) like this:
+```html
+<script type="module" src="https://cdn.jsdelivr.net/npm/node-diff3@2/index.min.mjs"></script> 
+```
+
+Older versions of modern ES6-capable browsers can still load the UMD build:
 ```html
 <script src="https://cdn.jsdelivr.net/npm/node-diff3@2/dist/index.min.js"></script> 
 ```
 
-Or if you need to support older browsers like Internet Explorer, fetch the ES5 version:
+Or if you need to support even older browsers like Internet Explorer, fetch the ES5 version:
 ```html
 <script src="https://cdn.jsdelivr.net/npm/node-diff3@2/dist/index.es5.min.js"></script> 
 ```
