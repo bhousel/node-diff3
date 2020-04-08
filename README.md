@@ -46,11 +46,27 @@ Or if you need to support older browsers like Internet Explorer, fetch the ES5 v
 ```
 
 
-## API
+## API Reference
 
-### 3-way diff and merging:
+* [3-way diff and merging](#3-way-diff-and-merging)
+  * [diff3Merge](#diff3Merge)
+  * [merge](#merge)
+  * [mergeDigIn](#mergeDigIn)
+  * [diff3MergeRegions](#diff3MergeRegions)
+* [2-way diff and patching](#2-way-diff-and-patching)
+  * [diffPatch](#diffPatch)
+  * [patch](#patch)
+  * [stripPatch](#stripPatch)
+  * [invertPatch](#invertPatch)
+  * [diffComm](#diffComm)
+  * [diffIndices](#diffIndices)
+* [Longest Common Sequence (LCS)](#longest-common-sequence-lcs)
+  * [LCS](#LCS)
 
-#### function diff3Merge (a, o, b, options)
+### 3-way diff and merging
+
+<a name="diff3Merge" href="#diff3Merge">#</a> <i>Diff3</i>.<b>diff3Merge</b>(<i>a</i>, <i>o</i>, <i>b</i>, <i>options</i>)
+
 Performs a 3-way diff on buffers `o` (original), `a`, and `b`.
 The buffers may be arrays or strings - if strings, they will be split on space `' '` by default.
 The returned result alternates between "ok" and "conflict" blocks.
@@ -76,8 +92,9 @@ Options may passed as an object:
 * `stringSeparator` - If inputs are passed as strings, this controls how to split the strings into arrays.
 
 
-#### function merge (a, o, b, options)
-Passes arguments to `diff3Merge` to generate a diff3-style merge result.
+<a name="merge" href="#merge">#</a> <i>Diff3</i>.<b>merge</b>(<i>a</i>, <i>o</i>, <i>b</i>, <i>options</i>)
+
+Passes arguments to [diff3Merge](#diff3Merge) to generate a diff3-style merge result.
 
 See examples: https://github.com/bhousel/node-diff3/blob/master/test/merge.test.js
 
@@ -111,20 +128,24 @@ const result = r.result;
 //  ]
 ```
 
-#### function mergeDigIn (a, o, b, options)
-Passes arguments to `diff3Merge` to generate a digin-style merge result.
+<a name="mergeDigIn" href="#mergeDigIn">#</a> <i>Diff3</i>.<b>mergeDigIn</b>(<i>a</i>, <i>o</i>, <i>b</i>, <i>options</i>)
+
+Passes arguments to [diff3Merge](#diff3Merge) to generate a digin-style merge result.
 
 See examples: https://github.com/bhousel/node-diff3/blob/master/test/mergeDigIn.test.js
 
-#### function diff3MergeRegions (a, o, b)
-Low-level function used by `diff3Merge` to determine the stable and unstable regions between `a`, `o`, `b`.
+
+<a name="diff3MergeRegions" href="#diff3MergeRegions">#</a> <i>Diff3</i>.<b>diff3MergeRegions</b>(<i>a</i>, <i>o</i>, <i>b</i>)
+
+Low-level function used by [diff3Merge](#diff3Merge) to determine the stable and unstable regions between `a`, `o`, `b`.
 
 See examples: https://github.com/bhousel/node-diff3/blob/master/test/diff3MergeRegions.test.js
 
 
-### 2-way diff and patching:
+### 2-way diff and patching
 
-#### function diffPatch (buffer1, buffer2)
+<a name="diffPatch" href="#diffPatch">#</a> <i>Diff3</i>.<b>diffPatch</b>(<i>buffer1</i>, <i>buffer2</i>)
+
 Performs a diff between arrays `buffer1` and `buffer2`.
 The returned `patch` result contains the information about the differing regions and can be applied to `buffer1` to yield `buffer2`.
 
@@ -137,7 +158,8 @@ const patch = Diff3.diffPatch(buffer1, buffer2);
 // `patch` contains the information needed to turn `buffer1` into `buffer2`
 ```
 
-#### function patch (buffer, patch)
+<a name="patch" href="#patch">#</a> <i>Diff3</i>.<b>patch</b>(<i>buffer1</i>, <i>patch</i>)
+
 Applies a patch to a buffer, returning a new buffer without modifying the original.
 
 See examples: https://github.com/bhousel/node-diff3/blob/master/test/diffPatch.test.js
@@ -147,7 +169,8 @@ const result = Diff3.patch(buffer1, patch);
 // `result` contains a new arrray which is a copy of `buffer2`
 ```
 
-#### function stripPatch (patch)
+<a name="stripPatch" href="#stripPatch">#</a> <i>Diff3</i>.<b>stripPatch</b>(<i>patch</i>)
+
 Strips some extra information from the patch, returning a new patch without modifying the original. 
 The "stripped" patch can still patch `buffer1` -> `buffer2`, but can no londer be inverted.
 
@@ -158,7 +181,8 @@ const stripped = Diff3.stripPatch(patch);
 // `stripped` contains a copy of a patch but with the extra information removed
 ```
 
-#### function invertPatch (patch)
+<a name="invertPatch" href="#invertPatch">#</a> <i>Diff3</i>.<b>invertPatch</b>(<i>patch</i>)
+
 Inverts the patch (for example to turn `buffer2` back into `buffer1`), returning a new patch without modifying the original.
 
 See examples: https://github.com/bhousel/node-diff3/blob/master/test/diffPatch.test.js
@@ -168,20 +192,23 @@ const inverted = Diff3.invertPatch(patch);
 // `inverted` contains a copy of a patch to turn `buffer2` back into `buffer1`
 ```
 
-#### function diffComm (buffer1, buffer2)
+<a name="diffComm" href="#diffComm">#</a> <i>Diff3</i>.<b>diffComm</b>(<i>buffer1</i>, <i>buffer2</i>)
+
 Returns a comm-style result of the differences between `buffer1` and `buffer2`.
 
 See examples: https://github.com/bhousel/node-diff3/blob/master/test/diffComm.test.js
 
-#### function diffIndices (buffer1, buffer2)
-Low-level function used by `diff3MergeRegions` to determine differing regions between `buffer1` and `buffer2`.
+<a name="diffIndices" href="#diffIndices">#</a> <i>Diff3</i>.<b>diffIndices</b>(<i>buffer1</i>, <i>buffer2</i>)
+
+Low-level function used by [diff3MergeRegions](#diff3MergeRegions) to determine differing regions between `buffer1` and `buffer2`.
 
 See examples: https://github.com/bhousel/node-diff3/blob/master/test/diffIndices.test.js
 
 
-### Longest Common Sequence (LCS):
+### Longest Common Sequence (LCS)
 
-#### function LCS (buffer1, buffer2)
+<a name="LCS" href="#LCS">#</a> <i>Diff3</i>.<b>LCS</b>(<i>buffer1</i>, <i>buffer2</i>)
+
 Low-level function used by other functions to find the LCS between `buffer1` and `buffer2`.
 Returns a result linked list chain containing the common sequence path.
 
