@@ -52,7 +52,7 @@ Or if you need to support older browsers like Internet Explorer, fetch the ES5 v
 
 #### function diff3Merge (a, o, b, options)
 Performs a 3-way diff on buffers `o` (original), `a`, and `b`.
-The buffers may be arrays or strings - if strings, they will be split on ' ' by default.
+The buffers may be arrays or strings - if strings, they will be split on space `' '` by default.
 The returned result alternates between "ok" and "conflict" blocks.
 
 See examples: https://github.com/bhousel/node-diff3/blob/master/test/diff3Merge.test.js
