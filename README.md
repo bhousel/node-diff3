@@ -63,9 +63,10 @@ Or if you need to support older browsers like Internet Explorer, fetch the ES5 v
 * [Longest Common Sequence (LCS)](#longest-common-sequence-lcs)
   * [LCS](#LCS)
 
-
+&nbsp;
 ### 3-way diff and merging
 
+&nbsp;
 <a name="diff3Merge" href="#diff3Merge">#</a> <i>Diff3</i>.<b>diff3Merge</b>(<i>a</i>, <i>o</i>, <i>b</i>, <i>options</i>)
 
 Performs a 3-way diff on buffers `o` (original), `a`, and `b`.
@@ -92,7 +93,7 @@ Options may passed as an object:
 * `excludeFalseConflicts` - If both `a` and `b` contain the same change from `o`, this is considered a "false" conflict.
 * `stringSeparator` - If inputs buffers are strings, this controls how to split the strings into arrays. The separator value may be a string or a regular expression, as it is just passed to [String.split()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split).
 
-
+&nbsp;
 <a name="merge" href="#merge">#</a> <i>Diff3</i>.<b>merge</b>(<i>a</i>, <i>o</i>, <i>b</i>, <i>options</i>)
 
 Passes arguments to [diff3Merge](#diff3Merge) to generate a diff3-style merge result.
@@ -129,13 +130,14 @@ const result = r.result;
 //  ]
 ```
 
+&nbsp;
 <a name="mergeDigIn" href="#mergeDigIn">#</a> <i>Diff3</i>.<b>mergeDigIn</b>(<i>a</i>, <i>o</i>, <i>b</i>, <i>options</i>)
 
 Passes arguments to [diff3Merge](#diff3Merge) to generate a digin-style merge result.
 
 See examples: https://github.com/bhousel/node-diff3/blob/master/test/mergeDigIn.test.js
 
-
+&nbsp;
 <a name="diff3MergeRegions" href="#diff3MergeRegions">#</a> <i>Diff3</i>.<b>diff3MergeRegions</b>(<i>a</i>, <i>o</i>, <i>b</i>)
 
 Low-level function used by [diff3Merge](#diff3Merge) to determine the stable and unstable regions between `a`, `o`, `b`.
@@ -143,8 +145,10 @@ Low-level function used by [diff3Merge](#diff3Merge) to determine the stable and
 See examples: https://github.com/bhousel/node-diff3/blob/master/test/diff3MergeRegions.test.js
 
 
+&nbsp;
 ### 2-way diff and patching
 
+&nbsp;
 <a name="diffPatch" href="#diffPatch">#</a> <i>Diff3</i>.<b>diffPatch</b>(<i>buffer1</i>, <i>buffer2</i>)
 
 Performs a diff between arrays `buffer1` and `buffer2`.
@@ -159,6 +163,7 @@ const patch = Diff3.diffPatch(buffer1, buffer2);
 // `patch` contains the information needed to turn `buffer1` into `buffer2`
 ```
 
+&nbsp;
 <a name="patch" href="#patch">#</a> <i>Diff3</i>.<b>patch</b>(<i>buffer1</i>, <i>patch</i>)
 
 Applies a patch to a buffer, returning a new buffer without modifying the original.
@@ -170,6 +175,7 @@ const result = Diff3.patch(buffer1, patch);
 // `result` contains a new arrray which is a copy of `buffer2`
 ```
 
+&nbsp;
 <a name="stripPatch" href="#stripPatch">#</a> <i>Diff3</i>.<b>stripPatch</b>(<i>patch</i>)
 
 Strips some extra information from the patch, returning a new patch without modifying the original. 
@@ -182,6 +188,7 @@ const stripped = Diff3.stripPatch(patch);
 // `stripped` contains a copy of a patch but with the extra information removed
 ```
 
+&nbsp;
 <a name="invertPatch" href="#invertPatch">#</a> <i>Diff3</i>.<b>invertPatch</b>(<i>patch</i>)
 
 Inverts the patch (for example to turn `buffer2` back into `buffer1`), returning a new patch without modifying the original.
@@ -193,12 +200,14 @@ const inverted = Diff3.invertPatch(patch);
 // `inverted` contains a copy of a patch to turn `buffer2` back into `buffer1`
 ```
 
+&nbsp;
 <a name="diffComm" href="#diffComm">#</a> <i>Diff3</i>.<b>diffComm</b>(<i>buffer1</i>, <i>buffer2</i>)
 
 Returns a comm-style result of the differences between `buffer1` and `buffer2`.
 
 See examples: https://github.com/bhousel/node-diff3/blob/master/test/diffComm.test.js
 
+&nbsp;
 <a name="diffIndices" href="#diffIndices">#</a> <i>Diff3</i>.<b>diffIndices</b>(<i>buffer1</i>, <i>buffer2</i>)
 
 Low-level function used by [diff3MergeRegions](#diff3MergeRegions) to determine differing regions between `buffer1` and `buffer2`.
@@ -206,8 +215,10 @@ Low-level function used by [diff3MergeRegions](#diff3MergeRegions) to determine 
 See examples: https://github.com/bhousel/node-diff3/blob/master/test/diffIndices.test.js
 
 
+&nbsp;
 ### Longest Common Sequence (LCS)
 
+&nbsp;
 <a name="LCS" href="#LCS">#</a> <i>Diff3</i>.<b>LCS</b>(<i>buffer1</i>, <i>buffer2</i>)
 
 Low-level function used by other functions to find the LCS between `buffer1` and `buffer2`.
