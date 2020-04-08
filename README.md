@@ -8,9 +8,10 @@ This is a Javascript library for text diffing and three-way-merge.
 The code originally came from project Synchrotron, created by Tony Garnock-Jones.
 For more detail please visit:
 
-- https://leastfixedpoint.com/tonyg/kcbbs/projects/synchrotron.html
-- https://github.com/tonyg/synchrotron
+* https://leastfixedpoint.com/tonyg/kcbbs/projects/synchrotron.html
+* https://github.com/tonyg/synchrotron
 
+&nbsp;
 
 ## Usage
 
@@ -44,6 +45,7 @@ Or if you need to support older browsers like Internet Explorer, fetch the ES5 v
 <script src="https://cdn.jsdelivr.net/npm/node-diff3@2/dist/index.es5.min.js"></script> 
 ```
 
+&nbsp;
 
 ## API Reference
 
@@ -243,6 +245,8 @@ See also:
 
 See examples: https://github.com/bhousel/node-diff3/blob/master/test/LCS.test.js
 
+
+&nbsp;
 
 ## License
 
