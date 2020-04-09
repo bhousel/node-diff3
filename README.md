@@ -3,10 +3,9 @@
 
 # node-diff3
 
-This is a Javascript library for text diffing and three-way-merge.
+**node-diff3** is a Javascript library to find differences between two buffers, generate and apply patches, and perform 3-way merging between an original and two changed buffers. It contains similar functionality to the [GNU Diffutils](https://www.gnu.org/software/diffutils/manual/diffutils.html) tools.
 
-The code originally came from project Synchrotron, created by Tony Garnock-Jones.
-For more detail please visit:
+The code originally came from project Synchrotron, created by Tony Garnock-Jones. For more detail please visit:
 
 * https://leastfixedpoint.com/tonyg/kcbbs/projects/synchrotron.html
 * https://github.com/tonyg/synchrotron
@@ -15,12 +14,12 @@ For more detail please visit:
 
 ## Usage
 
-To install node-diff3 as a dependency in another project:
+To install node-diff3 as a dependency in your project:
 ```bash
 $  npm install --save node-diff3
 ```
 
-This library is distributed in both UMD and ES6 module formats for maxmimum compatibility. <sub>([read more about Javascript module formats](https://dev.to/iggredible/what-the-heck-are-cjs-amd-umd-and-esm-ikm))</sub>
+**node-diff3** is distributed in both UMD and ES6 module formats for maxmimum compatibility. ([Read more about Javascript module formats](https://dev.to/iggredible/what-the-heck-are-cjs-amd-umd-and-esm-ikm))
 * `index.mjs`  - ES6 module
 * `dist/index.js` - UMD module, ES6 syntax
 * `dist/index.es5.js` - UMD module, ES5 syntax
@@ -35,7 +34,7 @@ import * as Diff3 from 'node-diff3';                   // ES6 import all
 import { diff3Merge } from 'node-diff3';               // ES6 import named
 ```
 
-You can also use node-diff3 directly in a web browser. A good way to do this is to fetch the file from the [jsDelivr CDN](https://www.jsdelivr.com/), which can even deliver minified versions:
+You can also use **node-diff3** directly in a web browser. A good way to do this is to fetch the file from the [jsDelivr CDN](https://www.jsdelivr.com/), which can even deliver minified versions.
 
 The latest versions of many web browsers now support [ES6 modules in script tags](https://caniuse.com/#feat=es6-module) like this:
 ```html
@@ -79,7 +78,7 @@ Or if you need to support even older browsers like Internet Explorer, fetch the 
 
 <a name="diff3Merge" href="#diff3Merge">#</a> <i>Diff3</i>.<b>diff3Merge</b>(<i>a</i>, <i>o</i>, <i>b</i>, <i>options</i>)
 
-Performs a 3-way diff on buffers `o` (original), `a`, and `b`.
+Performs a 3-way diff on buffers `o` (original), and `a` and `b` (changed).
 The buffers may be arrays or strings. If strings, they will be split into arrays on whitespace `/\s+/` by default.
 The returned result alternates between "ok" and "conflict" blocks.
 
@@ -100,7 +99,7 @@ Options may passed as an object:
 }
 ```
 
-* `excludeFalseConflicts` - If both `a` and `b` contain the same change from `o`, this is considered a "false" conflict.
+* `excludeFalseConflicts` - If both `a` and `b` contain an identical change from `o`, this is considered a "false" conflict.
 * `stringSeparator` - If inputs buffers are strings, this controls how to split the strings into arrays. The separator value may be a string or a regular expression, as it is just passed to [String.split()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split).
 
 &nbsp;
