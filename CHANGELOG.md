@@ -19,12 +19,13 @@ _Breaking changes, which may affect downstream projects, are marked with a_ :war
 
 
 ## 2.0.0
-##### 2017-nov-21
+##### 2020-apr-08
 
-* :warning: `invertPatch` now returns a copy instead of modifying patch in place ([#33])
-* :warning: `diff3Merge`, `merge`, `mergeDigIn` now accept options object
-* :warning: Split strings on whitespace by default, use `stringSeparator` option to change ([#9])
-* :warning: `diff3MergeIndices` renamed to `diff3MergeRegions`
+* :warning: Several breaking changes:
+  * `invertPatch` now returns a copy instead of modifying patch in place ([#33])
+  * `diff3Merge`, `merge`, `mergeDigIn` now accept `options` object instead of `excludeFalseConflicts` argument
+  * Strings are split on whitespace by default. Use `stringSeparator` option to override this behavior. ([#9])
+  * `diff3MergeIndices` renamed to `diff3MergeRegions`
 * Add test coverage for everything ([#3])
 
 [#33]: https://github.com/bhousel/node-diff3/issues/33
