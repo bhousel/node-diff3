@@ -17,6 +17,12 @@ _Breaking changes, which may affect downstream projects, are marked with a_ :war
 [#xxx]: https://github.com/bhousel/node-diff3/issues/xxx
 -->
 
+## 2.0.1
+##### 2020-may-18
+
+* ([#35]) Added typescript declaration file
+
+[#35]: https://github.com/bhousel/node-diff3/issues/35
 
 ## 2.0.0
 ##### 2020-apr-08

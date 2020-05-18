@@ -12,6 +12,7 @@
   ],
   "main": "dist/index.js",
   "module": "index.mjs",
+  "types": "index.d.ts",
   "devDependencies": {
     "@rollup/plugin-buble": "^0.21.1",
     "coveralls": "^3.0.9",
