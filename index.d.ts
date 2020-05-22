@@ -110,6 +110,10 @@ export type IRegion<T> = IStableRegion<T> | IUnstableRegion<T>;
  */
 export function diff3MergeRegions<T>(a: T[], o: T[], b: T[]): IRegion<T>[];
 
+export interface IMergeOkRegion<T> {
+  ok: T[];
+}
+
 export interface IMergeConflictRegion<T> {
   conflict: {
     a: T[];
@@ -121,7 +125,7 @@ export interface IMergeConflictRegion<T> {
   };
 }
 
-export type MergeRegion<T> = T[] | IMergeConflictRegion<T>;
+export type MergeRegion<T> = IMergeOkRegion<T> | IMergeConflictRegion<T>;
 
 export interface IMergeOptions {
   excludeFalseConflicts?: boolean;
