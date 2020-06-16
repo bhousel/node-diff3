@@ -2,7 +2,7 @@
 
 #### Update version, tag, and publish
 ```bash
-$ git checkout master
+$ git checkout main
 $ npm install
 $ npm run test
 $ Update CHANGELOG
@@ -10,7 +10,7 @@ $ Update version number in `package.json`
 $ git add .
 $ git commit -m 'vA.B.C'
 $ git tag vA.B.C
-$ git push origin master vA.B.C
+$ git push origin main vA.B.C
 $ npm publish
 
 ```
