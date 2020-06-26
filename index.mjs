@@ -5,6 +5,7 @@ export {
   diffPatch,
   diff3MergeRegions,
   diff3Merge,
+  mergeDiff3,
   merge,
   mergeDigIn,
   patch,
@@ -384,6 +385,39 @@ function diff3Merge(a, o, b, options) {
   return results;
 }
 
+function mergeDiff3(a, o, b, options) {
+  let defaults = {
+    excludeFalseConflicts: true,
+    stringSeparator: /\s+/,
+    label: {}
+  };
+  options = Object.assign(defaults, options);
+
+  const mergeResult = diff3Merge(a, o, b, options);
+
+  let conflict = false;
+  let lines = [];
+
+  mergeResult.forEach(result => {
+    if (result.ok) {
+      lines = lines.concat(result.ok);
+    } else if (result.conflict) { 
+      conflict = true;
+      lines.push(`<<<<<<<${options.label.a ? ` ${options.label.a}` : ''}`);
+      lines = lines.concat(result.conflict.a);
+      lines.push(`|||||||${options.label.o ? ` ${options.label.o}` : ''}`);
+      lines = lines.concat(result.conflict.o);
+      lines.push('=======');
+      lines = lines.concat(result.conflict.b);
+      lines.push(`>>>>>>>${options.label.b ? ` ${options.label.b}` : ''}`);
+    }
+  });
+
+  return {
+    conflict: conflict,
+    result: lines
+  };
+}
 
 function merge(a, o, b, options) {
   let defaults = {
