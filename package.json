@@ -4,7 +4,7 @@
   "license": "MIT",
   "repository": "bhousel/node-diff3",
   "description": "A node.js module for text diffing and three-way-merge.",
-  "keywords": ["diff", "diff3", "merge"],
+  "keywords": ["diff", "diff3", "merge", "nodejs", "javascript"],
   "contributors": [
     "Bryan Housel <bhousel@gmail.com> (https://github.com/bhousel)"
   ],
