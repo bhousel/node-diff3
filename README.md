@@ -58,6 +58,7 @@ Or if you need to support even older browsers like Internet Explorer, fetch the 
 * [3-way diff and merging](#3-way-diff-and-merging)
   * [diff3Merge](#diff3Merge)
   * [merge](#merge)
+  * [mergeDiff3](#mergeDiff3)
   * [mergeDigIn](#mergeDigIn)
   * [diff3MergeRegions](#diff3MergeRegions)
 * [2-way diff and patching](#2-way-diff-and-patching)
@@ -138,6 +139,59 @@ const result = r.result;
 //   'z',
 //   '99'
 //  ]
+```
+
+&nbsp;
+
+<a name="mergeDiff3" href="#mergeDiff3">#</a> <i>Diff3</i>.<b>mergeDiff3</b>(<i>a</i>, <i>o</i>, <i>b</i>, <i>options</i>)
+
+Passes arguments to [diff3Merge](#diff3Merge) to generate a diff3-style merge result with original (similar to [git-diff3](https://git-scm.com/book/en/v2/Git-Tools-Advanced-Merging)).
+
+See examples: https://github.com/bhousel/node-diff3/blob/main/test/mergeDiff3.test.js
+
+```js
+const r = Diff3.mergeDiff3(a, o, b, { label: { a: 'a', o: 'o', b: 'b' } });
+const result = r.result;
+// [
+//   'AA',
+//   '<<<<<<< a',
+//   'a',
+//   'b',
+//   'c',
+//   '||||||| o',
+//   '=======',
+//   'a',
+//   'd',
+//   'c',
+//   '>>>>>>> b',
+//   'ZZ',
+//   '<<<<<<< a',
+//   'new',
+//   '00',
+//   'a',
+//   'a',
+//   '||||||| o',
+//   '00',
+//   '=======',
+//   '11',
+//   '>>>>>>> b',
+//   'M',
+//   'z',
+//   'z',
+//   '99'
+//  ]
+```
+
+Extra options:
+```js
+{
+  // labels for conflict marker lines
+  label: {
+    a: 'a',
+    o: 'o',
+    b: 'b'
+  },
+}
 ```
 
 &nbsp;

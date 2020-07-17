@@ -110,12 +110,9 @@ export type IRegion<T> = IStableRegion<T> | IUnstableRegion<T>;
  */
 export function diff3MergeRegions<T>(a: T[], o: T[], b: T[]): IRegion<T>[];
 
-export interface IMergeOkRegion<T> {
-  ok: T[];
-}
-
-export interface IMergeConflictRegion<T> {
-  conflict: {
+export interface MergeRegion<T> {
+  ok?: T[];
+  conflict?: {
     a: T[];
     aIndex: number;
     b: T[];
@@ -125,7 +122,10 @@ export interface IMergeConflictRegion<T> {
   };
 }
 
-export type MergeRegion<T> = IMergeOkRegion<T> | IMergeConflictRegion<T>;
+export interface MergeResult {
+  conflict: boolean;
+  result: string[];
+}
 
 export interface IMergeOptions {
   excludeFalseConflicts?: boolean;
@@ -156,11 +156,24 @@ export function merge<T>(
   o: string | T[],
   b: string | T[],
   options?: IMergeOptions
-): string[];
+): MergeResult;
+
+export function mergeDiff3<T>(
+  a: string | T[],
+  o: string | T[],
+  b: string | T[],
+  options?: IMergeOptions & {
+    label?: {
+      a?: string;
+      o?: string;
+      b?: string;
+    }
+  }
+): MergeResult;
 
 export function mergeDigIn<T>(
   a: string | T[],
   o: string | T[],
   b: string | T[],
   options?: IMergeOptions
-): string[];
+): MergeResult;
