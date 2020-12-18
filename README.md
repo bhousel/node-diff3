@@ -1,5 +1,5 @@
+[![build](https://github.com/bhousel/node-diff3/workflows/build/badge.svg)](https://github.com/bhousel/node-diff3/actions?query=workflow%3A%22build%22)
 [![npm version](https://badge.fury.io/js/node-diff3.svg)](https://badge.fury.io/js/node-diff3)
-[![Build Status](https://travis-ci.org/bhousel/node-diff3.svg?branch=main)](https://travis-ci.org/bhousel/node-diff3)
 
 # node-diff3
 
