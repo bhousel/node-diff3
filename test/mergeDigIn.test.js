@@ -8,7 +8,7 @@ test('mergeDigIn', function(t) {
     const a = ['AA'];
     const b = ['AA'];
     const r = Diff3.merge(a, o, b);
-    t.false(r.conflict);
+    t.notOk(r.conflict);
     const result = r.result;
     t.same(result[0], 'AA');
     t.end();
@@ -19,7 +19,7 @@ test('mergeDigIn', function(t) {
     const a = ['AA', 'a', 'b', 'c', 'ZZ', 'new', '00', 'a', 'a', 'M', '99'];
     const b = ['AA', 'a', 'd', 'c', 'ZZ', '11', 'M', 'z', 'z', '99'];
     const r = Diff3.mergeDigIn(a, o, b);
-    t.true(r.conflict);
+    t.ok(r.conflict);
 
     const result = r.result;
     t.same(result[0], 'AA');

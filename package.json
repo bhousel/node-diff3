@@ -4,7 +4,13 @@
   "license": "MIT",
   "repository": "bhousel/node-diff3",
   "description": "A node.js module for text diffing and three-way-merge.",
-  "keywords": ["diff", "diff3", "merge", "nodejs", "javascript"],
+  "keywords": [
+    "diff",
+    "diff3",
+    "merge",
+    "nodejs",
+    "javascript"
+  ],
   "contributors": [
     "Bryan Housel <bhousel@gmail.com> (https://github.com/bhousel)"
   ],
@@ -25,7 +31,7 @@
     "dist:js": "rollup --config config/rollup.config.js",
     "dist:es5": "rollup --config config/rollup.config.es5.js",
     "lint": "eslint index.mjs test/*.js",
-    "test": "npm run lint && npm run build && tap --reporter terse --cov test/*.js"
+    "test": "npm run lint && npm run build && tap --reporter terse --no-check-coverage test/*.js"
   },
   "engines": {
     "node": ">=10"

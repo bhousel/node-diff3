@@ -98,10 +98,10 @@ test('stripPatch', function(t) {
   });
 
   t.test('did not modify the original patch', function(t) {
-    t.notEqual(patch, strip);
-    t.notEqual(patch[0], strip[0]);
-    t.notEqual(patch[1], strip[1]);
-    t.notEqual(patch[2], strip[2]);
+    t.not(patch, strip);
+    t.not(patch[0], strip[0]);
+    t.not(patch[1], strip[1]);
+    t.not(patch[2], strip[2]);
     t.end();
   });
 
@@ -145,10 +145,10 @@ test('invertPatch', function(t) {
   });
 
   t.test('did not modify the original patch', function(t) {
-    t.notEqual(patch, invert);
-    t.notEqual(patch[0], invert[0]);
-    t.notEqual(patch[1], invert[1]);
-    t.notEqual(patch[2], invert[2]);
+    t.not(patch, invert);
+    t.not(patch[0], invert[0]);
+    t.not(patch[1], invert[1]);
+    t.not(patch[2], invert[2]);
     t.end();
   });
 
