@@ -249,7 +249,7 @@ const result = Diff3.patch(buffer1, patch);
 <a name="stripPatch" href="#stripPatch">#</a> <i>Diff3</i>.<b>stripPatch</b>(<i>patch</i>)
 
 Strips some extra information from the patch, returning a new patch without modifying the original.
-The "stripped" patch can still patch `buffer1` -> `buffer2`, but can no londer be inverted.
+The "stripped" patch can still patch `buffer1` -> `buffer2`, but can no longer be inverted.
 
 See examples: https://github.com/bhousel/node-diff3/blob/main/test/diffPatch.test.js
 
