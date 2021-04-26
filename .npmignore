@@ -4,6 +4,7 @@ package-lock.json
 .travis.yml
 RELEASE.md
 
+.github/
 .vscode/
 .nyc_output/
 config/
