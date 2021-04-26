@@ -2,8 +2,8 @@
 npm-debug.log
 package-lock.json
 
-dist/
 .vscode/
 .nyc_output/
 coverage/
+dist/
 node_modules/

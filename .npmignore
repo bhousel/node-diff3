@@ -1,7 +1,6 @@
 .DS_Store
 npm-debug.log
 package-lock.json
-.travis.yml
 RELEASE.md
 
 .github/
