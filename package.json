@@ -1,6 +1,6 @@
 {
   "name": "node-diff3",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "license": "MIT",
   "repository": "bhousel/node-diff3",
   "description": "A node.js module for text diffing and three-way-merge.",
