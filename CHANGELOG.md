@@ -16,6 +16,14 @@ _Breaking changes, which may affect downstream projects, are marked with a_ :war
 
 [#xxx]: https://github.com/bhousel/node-diff3/issues/xxx
 -->
+## 2.1.1
+##### 2021-apr-26
+
+* ([#42]) Fix typo and add TypeScript definition for `patch`
+
+[#42]: https://github.com/bhousel/node-diff3/issues/42
+
+
 ## 2.1.0
 ##### 2020-jul-17
 
