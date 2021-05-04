@@ -16,6 +16,15 @@ _Breaking changes, which may affect downstream projects, are marked with a_ :war
 
 [#xxx]: https://github.com/bhousel/node-diff3/issues/xxx
 -->
+
+## 2.1.2
+##### 2021-may-04
+
+* ([#44]) Fix "Type 'Buffer' is not generic." TypeScript error
+
+[#44]: https://github.com/bhousel/node-diff3/issues/44
+
+
 ## 2.1.1
 ##### 2021-apr-26
 
