@@ -401,7 +401,7 @@ function mergeDiff3(a, o, b, options) {
   mergeResult.forEach(result => {
     if (result.ok) {
       lines = lines.concat(result.ok);
-    } else if (result.conflict) { 
+    } else if (result.conflict) {
       conflict = true;
       lines.push(`<<<<<<<${options.label.a ? ` ${options.label.a}` : ''}`);
       lines = lines.concat(result.conflict.a);
@@ -514,7 +514,7 @@ function patch(buffer, patch) {
 }
 
 
-// Takes the output of diffPatch(), and removes extra information from it. 
+// Takes the output of diffPatch(), and removes extra information from it.
 // It can still be used by patch(), below, but can no longer be inverted.
 function stripPatch(patch) {
   return patch.map(chunk => ({
@@ -524,11 +524,11 @@ function stripPatch(patch) {
 }
 
 
-// Takes the output of diffPatch(), and inverts the sense of it, so that it 
+// Takes the output of diffPatch(), and inverts the sense of it, so that it
 // can be applied to buffer2 to give buffer1 rather than the other way around.
 function invertPatch(patch) {
-  return patch.map(chunk => ({ 
-    buffer1: chunk.buffer2, 
-    buffer2: chunk.buffer1 
+  return patch.map(chunk => ({
+    buffer1: chunk.buffer2,
+    buffer2: chunk.buffer1
   }));
 }

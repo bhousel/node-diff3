@@ -67,7 +67,7 @@ export interface IPatchRes<T> {
  */
 export function diffPatch<T>(buffer1: T[], buffer2: T[]): IPatchRes<T>[];
 
-export function patch<T>(buffer: T[], patch: IPatchRes<T>[]): Buffer<T>[];
+export function patch<T>(buffer: T[], patch: IPatchRes<T>[]): T[];
 
 export interface IStableRegion<T> {
   stable: true;
