@@ -7,15 +7,24 @@ Please star our project on GitHub to show your support! ⭐️
 
 _Breaking changes, which may affect downstream projects, are marked with a_ ⚠️
 
-
 <!--
 # A.B.C
 ##### YYYY-MMM-DD
-
 *
 
 [#xxx]: https://github.com/bhousel/node-diff3/issues/xxx
 -->
+
+## 3.0.0
+##### 2021-Jun-26
+
+* ⚠️  Replace rollup with [esbuild](https://esbuild.github.io/) for super fast build speed. Package outputs are now:
+  * `"module": "./index.mjs"` - ESM, modern JavaScript, works with `import`
+  * `"main": "./dist/index.cjs"` - CJS bundle, modern JavaScript, works with `require()`
+  * `"browser": "./dist/index.iife.js"` - IIFE bundle, modern JavaScript, works in browser `<script>` tag
+  * No longer distributing ES5 builds
+* ⚠️  node-diff3 is marked as `"type": "module"` now
+
 
 ## 2.1.2
 ##### 2021-May-04
