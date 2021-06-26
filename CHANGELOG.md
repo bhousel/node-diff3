@@ -3,9 +3,9 @@
 **node-diff3** is an open source project. You can submit bug reports, help out,
 or learn more by visiting our project page on GitHub:  :octocat: https://github.com/bhousel/node-diff3
 
-Please star our project on GitHub to show your support! :star:
+Please star our project on GitHub to show your support! ⭐️
 
-_Breaking changes, which may affect downstream projects, are marked with a_ :warning:
+_Breaking changes, which may affect downstream projects, are marked with a_ ⚠️
 
 
 <!--
@@ -18,7 +18,7 @@ _Breaking changes, which may affect downstream projects, are marked with a_ :war
 -->
 
 ## 2.1.2
-##### 2021-may-04
+##### 2021-May-04
 
 * ([#44]) Fix "Type 'Buffer' is not generic." TypeScript error
 
@@ -26,7 +26,7 @@ _Breaking changes, which may affect downstream projects, are marked with a_ :war
 
 
 ## 2.1.1
-##### 2021-apr-26
+##### 2021-Apr-26
 
 * ([#42]) Fix typo and add TypeScript definition for `patch`
 
@@ -34,7 +34,7 @@ _Breaking changes, which may affect downstream projects, are marked with a_ :war
 
 
 ## 2.1.0
-##### 2020-jul-17
+##### 2020-Jul-17
 
 * ([#39]) Added a `mergeDiff3` function to help print out Diff3 merge result
 * ([#37]) Fixed error in TypeScript definition for `MergeRegion`
@@ -44,7 +44,7 @@ _Breaking changes, which may affect downstream projects, are marked with a_ :war
 
 
 ## 2.0.1
-##### 2020-may-18
+##### 2020-May-18
 
 * ([#35]) Added TypeScript declaration file
 
@@ -52,9 +52,9 @@ _Breaking changes, which may affect downstream projects, are marked with a_ :war
 
 
 ## 2.0.0
-##### 2020-apr-08
+##### 2020-Apr-08
 
-* :warning: Several breaking changes:
+* ⚠️  Several breaking changes:
   * `invertPatch` now returns a copy instead of modifying patch in place ([#33])
   * `diff3Merge`, `merge`, `mergeDigIn` now accept `options` object instead of `excludeFalseConflicts` argument
   * Strings are split on whitespace by default. Use `stringSeparator` option to override this behavior. ([#9])
@@ -67,15 +67,15 @@ _Breaking changes, which may affect downstream projects, are marked with a_ :war
 
 
 ## 1.0.0
-##### 2017-nov-21
+##### 2017-Nov-21
 
 * Pushing major version bump due to change in npm ownership
 
 
 ## 0.1.0
-##### 2017-oct-24
+##### 2017-Oct-24
 
-* :warning: Distribute both ES6 `index.mjs` and CJS `index.js`
+* ⚠️  Distribute both ESM `index.mjs` and CJS `index.js`
 * Fix improper hunk sorting ([iD#3058])
 * Add tests, TravisCI
 

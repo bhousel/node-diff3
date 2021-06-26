@@ -1,9 +1,9 @@
-const test = require('tap').test;
-const Diff3 = require('../.');
+import { test } from 'tap';
+import * as Diff3 from '../index.mjs';
 
-test('mergeDigIn', function(t) {
+test('mergeDigIn', t => {
 
-  t.test('returns conflict: false if no conflicts', function(t) {
+  t.test('returns conflict: false if no conflicts', t => {
     const o = ['AA'];
     const a = ['AA'];
     const b = ['AA'];
@@ -14,7 +14,7 @@ test('mergeDigIn', function(t) {
     t.end();
   });
 
-  t.test('returns a digin-style merge result', function(t) {
+  t.test('returns a digin-style merge result', t => {
     const o = ['AA', 'ZZ', '00', 'M', '99'];
     const a = ['AA', 'a', 'b', 'c', 'ZZ', 'new', '00', 'a', 'a', 'M', '99'];
     const b = ['AA', 'a', 'd', 'c', 'ZZ', '11', 'M', 'z', 'z', '99'];

@@ -14,42 +14,43 @@ The code originally came from project Synchrotron, created by Tony Garnock-Jones
 
 ## Usage
 
+### Use in Node
+
 To install node-diff3 as a dependency in your project:
 ```bash
 $  npm install --save node-diff3
 ```
 
-**node-diff3** is distributed in both UMD and ES6 module formats for maxmimum compatibility. ([Read more about Javascript module formats](https://dev.to/iggredible/what-the-heck-are-cjs-amd-umd-and-esm-ikm))
-* `index.mjs`  - ES6 module
-* `dist/index.js` - UMD module, ES6 syntax
-* `dist/index.es5.js` - UMD module, ES5 syntax
+**node-diff3** is distributed in CJS and ESM module formats for maxmimum compatibility. ([Read more about Javascript module formats](https://dev.to/iggredible/what-the-heck-are-cjs-amd-umd-and-esm-ikm))
 
-Whether you require or import it, it should just work.
 
 ```js
-const Diff3 = require('node-diff3');                   // UMD import all
-const diff3Merge = require('node-diff3').diff3Merge;   // UMD import named
+const Diff3 = require('node-diff3');                   // CommonJS import all
+const diff3Merge = require('node-diff3').diff3Merge;   // CommonJS import named
 // or
-import * as Diff3 from 'node-diff3';                   // ES6 import all
-import { diff3Merge } from 'node-diff3';               // ES6 import named
+import * as Diff3 from 'node-diff3';                   // ESM import all
+import { diff3Merge } from 'node-diff3';               // ESM import named
 ```
 
-You can also use **node-diff3** directly in a web browser. A good way to do this is to fetch the file from the [jsDelivr CDN](https://www.jsdelivr.com/), which can even deliver minified versions.
+### Use in Browsers
 
-The latest versions of many web browsers now support [ES6 modules in script tags](https://caniuse.com/#feat=es6-module) like this:
+You can also use **node-diff3** directly in a web browser.  A good way to do this is to fetch the ["iife"](https://esbuild.github.io/api/#format-iife) bundle from the [jsDelivr CDN](https://www.jsdelivr.com/), which can even deliver minified versions.
+
+When you load this file in a `<script>` tag, you'll get a `Diff3` global to use elsewhere in your scripts:
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/node-diff3@2/index.min.mjs"></script>
+<head>
+<script src="https://cdn.jsdelivr.net/npm/node-diff3@3.0/dist/index.iife.min.js"></script>
+</head>
+…
+<script>
+  const o = ['AA', 'ZZ', '00', 'M', '99'];
+  const a = ['AA', 'a', 'b', 'c', 'ZZ', 'new', '00', 'a', 'a', 'M', '99'];
+  const b = ['AA', 'a', 'd', 'c', 'ZZ', '11', 'M', 'z', 'z', '99'];
+  const result = Diff3.diff3Merge(a, o, b);
+</script>
 ```
 
-Older versions of modern ES6-capable browsers can still load the UMD build:
-```html
-<script src="https://cdn.jsdelivr.net/npm/node-diff3@2/dist/index.min.js"></script>
-```
-
-Or if you need to support even older browsers like Internet Explorer, fetch the ES5 version:
-```html
-<script src="https://cdn.jsdelivr.net/npm/node-diff3@2/dist/index.es5.min.js"></script>
-```
+👉 This project uses modern JavaScript syntax for use in supported node versions and modern browsers.  If you need support for legacy environments like ES5 or Internet Explorer, you'll need to build your own bundle with something like [Babel](https://babeljs.io/docs/en/index.html).
 
 &nbsp;
 

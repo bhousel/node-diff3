@@ -1,9 +1,9 @@
-const test = require('tap').test;
-const Diff3 = require('..');
+import { test } from 'tap';
+import * as Diff3 from '../index.mjs';
 
-test('mergeDiff3', function(t) {
+test('mergeDiff3', t => {
 
-  t.test('performs merge diff3 on arrays', function(t) {
+  t.test('performs merge diff3 on arrays', t => {
     const o = ['AA', 'ZZ', '00', 'M', '99'];
     const a = ['AA', 'a', 'b', 'c', 'ZZ', 'new', '00', 'a', 'a', 'M', '99'];
     const b = ['AA', 'a', 'd', 'c', 'ZZ', '11', 'M', 'z', 'z', '99'];

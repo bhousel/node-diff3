@@ -1,9 +1,9 @@
-const test = require('tap').test;
-const Diff3 = require('../.');
+import { test } from 'tap';
+import * as Diff3 from '../index.mjs';
 
-test('diff3Merge', function(t) {
+test('diff3Merge', t => {
 
-  t.test('performs diff3 merge on arrays', function(t) {
+  t.test('performs diff3 merge on arrays', t => {
     const o = ['AA', 'ZZ', '00', 'M', '99'];
     const a = ['AA', 'a', 'b', 'c', 'ZZ', 'new', '00', 'a', 'a', 'M', '99'];
     const b = ['AA', 'a', 'd', 'c', 'ZZ', '11', 'M', 'z', 'z', '99'];
@@ -61,7 +61,7 @@ test('diff3Merge', function(t) {
   });
 
 
-  t.test('strings split on whitespace by default to avoid surprises - issue #9', function(t) {
+  t.test('strings split on whitespace by default to avoid surprises - issue #9', t => {
     const o = 'was touring';
     const a = 'was here   touring';
     const b = 'was into touring';
@@ -81,7 +81,7 @@ test('diff3Merge', function(t) {
     t.end();
   });
 
-  t.test('strings can optionally split on given separator', function(t) {
+  t.test('strings can optionally split on given separator', t => {
     const o = 'new hampshire, new mexico, north carolina';
     const a = 'new hampshire, new jersey,    north carolina';
     const b = 'new hampshire, new york, north carolina';
@@ -102,7 +102,7 @@ test('diff3Merge', function(t) {
   });
 
 
-  t.test('excludes false conflicts by default', function(t) {
+  t.test('excludes false conflicts by default', t => {
     const o = 'AA ZZ';
     const a = 'AA a b c ZZ';
     const b = 'AA a b c ZZ';
@@ -114,7 +114,7 @@ test('diff3Merge', function(t) {
   });
 
 
-  t.test('can include false conflicts with option', function(t) {
+  t.test('can include false conflicts with option', t => {
     const o = 'AA ZZ';
     const a = 'AA a b c ZZ';
     const b = 'AA a b c ZZ';
@@ -134,7 +134,7 @@ test('diff3Merge', function(t) {
   });
 
 
-  t.test('avoids improper hunk sorting - see openstreetmap/iD#3058', function(t) {
+  t.test('avoids improper hunk sorting - see openstreetmap/iD#3058', t => {
     const a = ['n4100522632', 'n4100697091', 'n4100697136', 'n-10000', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4102677890', 'n4094374176'];
     const o = ['n4100522632', 'n4100697091', 'n4100697136', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4102677890', 'n4094374176'];
     const b = ['n4100522632', 'n4100697091', 'n4100697136', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4105613618', 'n4102677890', 'n4105613617', 'n4094374176'];

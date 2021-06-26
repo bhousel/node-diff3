@@ -1,9 +1,9 @@
-const test = require('tap').test;
-const Diff3 = require('../.');
+import { test } from 'tap';
+import * as Diff3 from '../index.mjs';
 
-test('diff3MergeRegions', function(t) {
+test('diff3MergeRegions', t => {
 
-  t.test('returns results of 3-way diff from o,a,b arrays', function(t) {
+  t.test('returns results of 3-way diff from o,a,b arrays', t => {
     const o = ['AA', 'ZZ', '00', 'M', '99'];
     const a = ['AA', 'a', 'b', 'c', 'ZZ', 'new', '00', 'a', 'a', 'M', '99'];
     const b = ['AA', 'a', 'd', 'c', 'ZZ', '11', 'M', 'z', 'z', '99'];

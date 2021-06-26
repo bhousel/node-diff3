@@ -1,9 +1,9 @@
-const test = require('tap').test;
-const Diff3 = require('../.');
+import { test } from 'tap';
+import * as Diff3 from '../index.mjs';
 
-test('diffIndices', function(t) {
+test('diffIndices', t => {
 
-  t.test('returns array indices for differing regions of two arrays', function(t) {
+  t.test('returns array indices for differing regions of two arrays', t => {
     const a = ['AA', 'a', 'b', 'c', 'ZZ', 'new', '00', 'a', 'a', 'M', '99'];
     const b = ['AA', 'a', 'd', 'c', 'ZZ', '11', 'M', 'z', 'z', '99'];
     const result = Diff3.diffIndices(a, b);
