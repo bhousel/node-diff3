@@ -15,6 +15,17 @@ _Breaking changes, which may affect downstream projects, are marked with a_ тЪая
 [#xxx]: https://github.com/bhousel/node-diff3/issues/xxx
 -->
 
+## 3.1.0
+##### 2021-Sep-24
+
+* Add `sideEffects: false` to `package.json` so bundlers like webpack can treeshake
+* Remove the hardcoded `\n` from conflict boundaries ([#46], [#48])
+  * Users who want to view the results of a merge will probably do something like `console.log(result.join('\n'));`, so having extra `\n` in there is unhelpful.
+
+[#46]: https://github.com/bhousel/node-diff3/issues/46
+[#48]: https://github.com/bhousel/node-diff3/issues/48
+
+
 ## 3.0.0
 ##### 2021-Jun-26
 
