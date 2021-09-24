@@ -3,69 +3,82 @@ import * as Diff3 from '../index.mjs';
 
 test('mergeDiff3', t => {
 
+  t.test('returns conflict: false if no conflicts', t => {
+    const o = ['AA'];
+    const a = ['AA'];
+    const b = ['AA'];
+    const expected = ['AA'];
+
+    const r = Diff3.mergeDiff3(a, o, b);
+    t.notOk(r.conflict);
+    t.same(r.result, expected);
+    t.end();
+  });
+
+
   t.test('performs merge diff3 on arrays', t => {
     const o = ['AA', 'ZZ', '00', 'M', '99'];
     const a = ['AA', 'a', 'b', 'c', 'ZZ', 'new', '00', 'a', 'a', 'M', '99'];
     const b = ['AA', 'a', 'd', 'c', 'ZZ', '11', 'M', 'z', 'z', '99'];
-    const result = Diff3.mergeDiff3(a, o, b, { label: { a: 'a', o: 'o', b: 'b' } });
+    const expected = [
+      'AA',
+      '<<<<<<< a',
+      'a',
+      'b',
+      'c',
+      '||||||| o',
+      '=======',
+      'a',
+      'd',
+      'c',
+      '>>>>>>> b',
+      'ZZ',
+      '<<<<<<< a',
+      'new',
+      '00',
+      'a',
+      'a',
+      '||||||| o',
+      '00',
+      '=======',
+      '11',
+      '>>>>>>> b',
+      'M',
+      'z',
+      'z',
+      '99'
+    ];
 
-    /*
-    AA
-    <<<<<<< a
-    a
-    b
-    c
-    ||||||| o
-    =======
-    a
-    d
-    c
-    >>>>>>> b
-    ZZ
-    <<<<<<< a
-    new
-    00
-    a
-    a
-    ||||||| o
-    00
-    =======
-    11
-    >>>>>>> b
-    M
-    z
-    z
-    99
-    */
+    const r = Diff3.mergeDiff3(a, o, b, { label: { a: 'a', o: 'o', b: 'b' } });
+    t.ok(r.conflict);
+    t.same(r.result, expected);
+    t.end();
+  });
 
-    t.same(result.conflict, true);
-    t.same(result.result[0], 'AA');
-    t.same(result.result[1], '<<<<<<< a');
-    t.same(result.result[2], 'a');
-    t.same(result.result[3], 'b');
-    t.same(result.result[4], 'c');
-    t.same(result.result[5], '||||||| o');
-    t.same(result.result[6], '=======');
-    t.same(result.result[7], 'a');
-    t.same(result.result[8], 'd');
-    t.same(result.result[9], 'c');
-    t.same(result.result[10], '>>>>>>> b');
-    t.same(result.result[11], 'ZZ');
-    t.same(result.result[12], '<<<<<<< a');
-    t.same(result.result[13], 'new');
-    t.same(result.result[14], '00');
-    t.same(result.result[15], 'a');
-    t.same(result.result[16], 'a');
-    t.same(result.result[17], '||||||| o');
-    t.same(result.result[18], '00');
-    t.same(result.result[19], '=======');
-    t.same(result.result[20], '11');
-    t.same(result.result[21], '>>>>>>> b');
-    t.same(result.result[22], 'M');
-    t.same(result.result[23], 'z');
-    t.same(result.result[24], 'z');
-    t.same(result.result[25], '99');
 
+  t.test('yaml comparison - issue #46', t => {
+    const o = `title: "title"
+description: "description"`;
+    const a = `title: "title"
+description: "description changed"`;
+    const b = `title: "title changed"
+description: "description"`;
+    const expected = [
+      '<<<<<<< a',
+      'title: "title"',
+      'description: "description changed"',
+      '||||||| o',
+      'title: "title"',
+      'description: "description"',
+      '=======',
+      'title: "title changed"',
+      'description: "description"',
+      '>>>>>>> b'
+    ];
+
+    const r = Diff3.mergeDiff3(a, o, b, { label: { a: 'a', o: 'o', b: 'b' }, stringSeparator: /[\r\n]+/ });
+    t.ok(r.conflict);
+    t.same(r.result, expected);
     t.end();
   });
 

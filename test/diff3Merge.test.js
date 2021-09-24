@@ -135,13 +135,30 @@ test('diff3Merge', t => {
 
 
   t.test('avoids improper hunk sorting - see openstreetmap/iD#3058', t => {
-    const a = ['n4100522632', 'n4100697091', 'n4100697136', 'n-10000', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4102677890', 'n4094374176'];
     const o = ['n4100522632', 'n4100697091', 'n4100697136', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4102677890', 'n4094374176'];
+    const a = ['n4100522632', 'n4100697091', 'n4100697136', 'n-10000', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4102677890', 'n4094374176'];
     const b = ['n4100522632', 'n4100697091', 'n4100697136', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4105613618', 'n4102677890', 'n4105613617', 'n4094374176'];
     const expected = ['n4100522632', 'n4100697091', 'n4100697136', 'n-10000', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4105613618', 'n4102677890', 'n4105613617', 'n4094374176'];
     const result = Diff3.diff3Merge(a, o, b);
 
     t.same(result[0].ok, expected);
+    t.end();
+  });
+
+
+  t.test('yaml comparison - issue #46', t => {
+    const o = `title: "title"
+description: "description"`;
+    const a = `title: "title"
+description: "description changed"`;
+    const b = `title: "title changed"
+description: "description"`;
+    const result = Diff3.diff3Merge(a, o, b, { stringSeparator: /[\r\n]+/ });
+
+    t.same(result[0].ok, undefined);
+    t.same(result[0].conflict.o, ['title: "title"', 'description: "description"']);
+    t.same(result[0].conflict.a, ['title: "title"', 'description: "description changed"']);
+    t.same(result[0].conflict.b, ['title: "title changed"', 'description: "description"']);
     t.end();
   });
 
