@@ -332,13 +332,9 @@ function diff3Merge(a, o, b, options) {
   };
   options = Object.assign(defaults, options);
 
-  const aString = (typeof a === 'string');
-  const oString = (typeof o === 'string');
-  const bString = (typeof b === 'string');
-
-  if (aString) a = a.split(options.stringSeparator);
-  if (oString) o = o.split(options.stringSeparator);
-  if (bString) b = b.split(options.stringSeparator);
+  if (typeof a === 'string') a = a.split(options.stringSeparator);
+  if (typeof o === 'string') o = o.split(options.stringSeparator);
+  if (typeof b === 'string') b = b.split(options.stringSeparator);
 
   let results = [];
   const regions = diff3MergeRegions(a, o, b);
@@ -385,104 +381,128 @@ function diff3Merge(a, o, b, options) {
   return results;
 }
 
+
 function mergeDiff3(a, o, b, options) {
-  let defaults = {
+  const defaults = {
     excludeFalseConflicts: true,
     stringSeparator: /\s+/,
     label: {}
   };
   options = Object.assign(defaults, options);
 
-  const mergeResult = diff3Merge(a, o, b, options);
+  const aSection = '<<<<<<<' + (options.label.a ? ` ${options.label.a}` : '');
+  const oSection = '|||||||' + (options.label.o ? ` ${options.label.o}` : '');
+  const xSection = '=======';
+  const bSection = '>>>>>>>' + (options.label.b ? ` ${options.label.b}` : '');
 
+  const regions = diff3Merge(a, o, b, options);
   let conflict = false;
-  let lines = [];
+  let result = [];
 
-  mergeResult.forEach(result => {
-    if (result.ok) {
-      lines = lines.concat(result.ok);
-    } else if (result.conflict) {
+  regions.forEach(region => {
+    if (region.ok) {
+      result = result.concat(region.ok);
+    } else if (region.conflict) {
       conflict = true;
-      lines.push(`<<<<<<<${options.label.a ? ` ${options.label.a}` : ''}`);
-      lines = lines.concat(result.conflict.a);
-      lines.push(`|||||||${options.label.o ? ` ${options.label.o}` : ''}`);
-      lines = lines.concat(result.conflict.o);
-      lines.push('=======');
-      lines = lines.concat(result.conflict.b);
-      lines.push(`>>>>>>>${options.label.b ? ` ${options.label.b}` : ''}`);
+      result = result.concat(
+        [aSection],
+        region.conflict.a,
+        [oSection],
+        region.conflict.o,
+        [xSection],
+        region.conflict.b,
+        [bSection]
+      );
     }
   });
 
   return {
     conflict: conflict,
-    result: lines
+    result: result
   };
 }
 
+
 function merge(a, o, b, options) {
-  let defaults = {
+  const defaults = {
     excludeFalseConflicts: true,
-    stringSeparator: /\s+/
+    stringSeparator: /\s+/,
+    label: {}
   };
   options = Object.assign(defaults, options);
 
-  const merger = diff3Merge(a, o, b, options);
+  const aSection = '<<<<<<<' + (options.label.a ? ` ${options.label.a}` : '');
+  const xSection = '=======';
+  const bSection = '>>>>>>>' + (options.label.b ? ` ${options.label.b}` : '');
+
+  const regions = diff3Merge(a, o, b, options);
   let conflict = false;
-  let lines = [];
-  for (let i = 0; i < merger.length; i++) {
-    const item = merger[i];
-    if (item.ok) {
-      lines = lines.concat(item.ok);
-    } else {
+  let result = [];
+
+  regions.forEach(region => {
+    if (region.ok) {
+      result = result.concat(region.ok);
+    } else if (region.conflict) {
       conflict = true;
-      lines = lines.concat(
-        ['\n<<<<<<<<<\n'], item.conflict.a,
-        ['\n=========\n'], item.conflict.b,
-        ['\n>>>>>>>>>\n']
+      result = result.concat(
+        [aSection],
+        region.conflict.a,
+        [xSection],
+        region.conflict.b,
+        [bSection]
       );
     }
-  }
+  });
+
   return {
     conflict: conflict,
-    result: lines
+    result: result
   };
 }
 
 
 function mergeDigIn(a, o, b, options) {
-  let defaults = {
-    excludeFalseConflicts: false,
-    stringSeparator: /\s+/
+  const defaults = {
+    excludeFalseConflicts: true,
+    stringSeparator: /\s+/,
+    label: {}
   };
   options = Object.assign(defaults, options);
 
-  const merger = diff3Merge(a, o, b, options);
+  const aSection = '<<<<<<<' + (options.label.a ? ` ${options.label.a}` : '');
+  const xSection = '=======';
+  const bSection = '>>>>>>>' + (options.label.b ? ` ${options.label.b}` : '');
+
+  const regions = diff3Merge(a, o, b, options);
   let conflict = false;
-  let lines = [];
-  for (let i = 0; i < merger.length; i++) {
-    const item = merger[i];
-    if (item.ok) {
-      lines = lines.concat(item.ok);
+  let result = [];
+
+  regions.forEach(region => {
+    if (region.ok) {
+      result = result.concat(region.ok);
     } else {
-      const c = diffComm(item.conflict.a, item.conflict.b);
+      const c = diffComm(region.conflict.a, region.conflict.b);
       for (let j = 0; j < c.length; j++) {
         let inner = c[j];
         if (inner.common) {
-          lines = lines.concat(inner.common);
+          result = result.concat(inner.common);
         } else {
           conflict = true;
-          lines = lines.concat(
-            ['\n<<<<<<<<<\n'], inner.buffer1,
-            ['\n=========\n'], inner.buffer2,
-            ['\n>>>>>>>>>\n']
+          result = result.concat(
+            [aSection],
+            inner.buffer1,
+            [xSection],
+            inner.buffer2,
+            [bSection]
           );
         }
       }
     }
-  }
+  });
+
   return {
     conflict: conflict,
-    result: lines
+    result: result
   };
 }
 

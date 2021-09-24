@@ -22,24 +22,24 @@ test('merge', t => {
     const b = ['AA', 'a', 'd', 'c', 'ZZ', '11', 'M', 'z', 'z', '99'];
     const expected = [
       'AA',
-      '\n<<<<<<<<<\n',
+      '<<<<<<<',
       'a',
       'b',
       'c',
-      '\n=========\n',
+      '=======',
       'a',
       'd',
       'c',
-      '\n>>>>>>>>>\n',
+      '>>>>>>>',
       'ZZ',
-      '\n<<<<<<<<<\n',
+      '<<<<<<<',
       'new',
       '00',
       'a',
       'a',
-      '\n=========\n',
+      '=======',
       '11',
-      '\n>>>>>>>>>\n',
+      '>>>>>>>',
       'M',
       'z',
       'z',
@@ -61,13 +61,13 @@ description: "description changed"`;
     const b = `title: "title changed"
 description: "description"`;
     const expected = [
-      '\n<<<<<<<<<\n',
+      '<<<<<<<',
       'title: "title"',
       'description: "description changed"',
-      '\n=========\n',
+      '=======',
       'title: "title changed"',
       'description: "description"',
-      '\n>>>>>>>>>\n'
+      '>>>>>>>'
     ];
 
     const r = Diff3.merge(a, o, b, { stringSeparator: /[\r\n]+/ });
