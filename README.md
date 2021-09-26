@@ -39,7 +39,7 @@ You can also use **node-diff3** directly in a web browser.  A good way to do thi
 When you load this file in a `<script>` tag, you'll get a `Diff3` global to use elsewhere in your scripts:
 ```html
 <head>
-<script src="https://cdn.jsdelivr.net/npm/node-diff3@3.0/dist/index.iife.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/node-diff3@3.1/dist/index.iife.min.js"></script>
 </head>
 …
 <script>
