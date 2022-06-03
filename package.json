@@ -28,8 +28,13 @@
   "main": "./dist/index.cjs",
   "module": "./index.mjs",
   "exports": {
-    "import": "./index.mjs",
-    "require": "./dist/index.cjs"
+    ".": {
+      "import": {
+        "default": "./index.mjs",
+        "types": "./index.d.ts"
+      },
+      "require": "./dist/index.cjs"
+    }
   },
   "scripts": {
     "all": "run-s clean test",
