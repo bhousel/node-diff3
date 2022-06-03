@@ -14,6 +14,13 @@ _Breaking changes, which may affect downstream projects, are marked with a_ тЪая
 
 [#xxx]: https://github.com/bhousel/node-diff3/issues/xxx
 -->
+## 3.1.1
+##### 2022-Jun-03
+
+* Fix exports property for Typescript declaration file ([#57])
+
+[#57]: https://github.com/bhousel/node-diff3/issues/57
+
 
 ## 3.1.0
 ##### 2021-Sep-24
