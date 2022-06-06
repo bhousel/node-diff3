@@ -14,6 +14,15 @@ _Breaking changes, which may affect downstream projects, are marked with a_ тЪая
 
 [#xxx]: https://github.com/bhousel/node-diff3/issues/xxx
 -->
+
+## 3.1.2
+##### 2022-Jun-06
+
+* Rearrange "default" export to end of list for Webpack ([#58])
+
+[#58]: https://github.com/bhousel/node-diff3/issues/58
+
+
 ## 3.1.1
 ##### 2022-Jun-03
 
