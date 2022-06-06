@@ -30,8 +30,8 @@
   "exports": {
     ".": {
       "import": {
-        "default": "./index.mjs",
-        "types": "./index.d.ts"
+        "types": "./index.d.ts",
+        "default": "./index.mjs"
       },
       "require": "./dist/index.cjs"
     }
