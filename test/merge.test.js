@@ -76,5 +76,19 @@ description: "description"`;
     t.end();
   });
 
+  t.test('with timeout', t => {
+    const o = ''.padEnd(1024 * 1024 * 10, 'o  ');
+    const a = ''.padEnd(1024 * 1024 * 10, 'a  ');
+    const b = ''.padEnd(1024 * 1024 * 10, 'b  ');
+    t.throws(() => Diff3.merge(a, o, b, { msTimeout: 1000 }), new Diff3.TimeoutError());
+    t.doesNotThrow(() => Diff3.merge(
+      a.slice(0, 1024),
+      o.slice(0, 1024),
+      b.slice(0, 1024),
+      { msTimeout: 1000 }
+    ));
+    t.end();
+  });
+
   t.end();
 });

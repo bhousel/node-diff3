@@ -1,4 +1,5 @@
 export {
+  TimeoutError,
   LCS,
   diffComm,
   diffIndices,
@@ -13,6 +14,24 @@ export {
   invertPatch
 };
 
+class TimeoutError extends Error {
+  constructor() {
+    super('timeout reached');
+  }
+}
+
+function assertTimeout(startTime, msTimeout) {
+  if (msTimeout !== undefined && Date.now() - startTime > msTimeout) {
+    throw new TimeoutError();
+  }
+}
+
+function calcRemainingTimeout(startTime, msTimeout) {
+  if (msTimeout === undefined) {
+    return undefined;
+  }
+  return msTimeout + startTime - Date.now();
+}
 
 // Text diff algorithm following Hunt and McIlroy 1976.
 // J. W. Hunt and M. D. McIlroy, An algorithm for differential buffer
@@ -21,7 +40,8 @@ export {
 // https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 //
 // Expects two arrays, finds longest common sequence
-function LCS(buffer1, buffer2) {
+function LCS(buffer1, buffer2, msTimeout) {
+  const startTime = Date.now();
 
   let equivalenceClasses = {};
   for (let j = 0; j < buffer2.length; j++) {
@@ -37,12 +57,14 @@ function LCS(buffer1, buffer2) {
   let candidates = [NULLRESULT];
 
   for (let i = 0; i < buffer1.length; i++) {
+    assertTimeout(startTime, msTimeout);
     const item = buffer1[i];
     const buffer2indices = equivalenceClasses[item] || [];
     let r = 0;
     let c = candidates[0];
 
     for (let jx = 0; jx < buffer2indices.length; jx++) {
+      assertTimeout(startTime, msTimeout);
       const j = buffer2indices[jx];
 
       let s;
@@ -79,8 +101,9 @@ function LCS(buffer1, buffer2) {
 
 // We apply the LCS to build a 'comm'-style picture of the
 // differences between buffer1 and buffer2.
-function diffComm(buffer1, buffer2) {
-  const lcs = LCS(buffer1, buffer2);
+function diffComm(buffer1, buffer2, msTimeout) {
+  const startTime = Date.now();
+  const lcs = LCS(buffer1, buffer2, msTimeout);
   let result = [];
   let tail1 = buffer1.length;
   let tail2 = buffer2.length;
@@ -95,6 +118,7 @@ function diffComm(buffer1, buffer2) {
   }
 
   for (let candidate = lcs; candidate !== null; candidate = candidate.chain) {
+    assertTimeout(startTime, msTimeout);
     let different = {buffer1: [], buffer2: []};
 
     while (--tail1 > candidate.buffer1index) {
@@ -127,13 +151,15 @@ function diffComm(buffer1, buffer2) {
 // We apply the LCS to give a simple representation of the
 // offsets and lengths of mismatched chunks in the input
 // buffers. This is used by diff3MergeRegions.
-function diffIndices(buffer1, buffer2) {
-  const lcs = LCS(buffer1, buffer2);
+function diffIndices(buffer1, buffer2, msTimeout) {
+  const startTime = Date.now();
+  const lcs = LCS(buffer1, buffer2, msTimeout);
   let result = [];
   let tail1 = buffer1.length;
   let tail2 = buffer2.length;
 
   for (let candidate = lcs; candidate !== null; candidate = candidate.chain) {
+    assertTimeout(startTime, msTimeout);
     const mismatchLength1 = tail1 - candidate.buffer1index - 1;
     const mismatchLength2 = tail2 - candidate.buffer2index - 1;
     tail1 = candidate.buffer1index;
@@ -156,8 +182,9 @@ function diffIndices(buffer1, buffer2) {
 
 // We apply the LCS to build a JSON representation of a
 // diff(1)-style patch.
-function diffPatch(buffer1, buffer2) {
-  const lcs = LCS(buffer1, buffer2);
+function diffPatch(buffer1, buffer2, msTimeout) {
+  const startTime = Date.now();
+  const lcs = LCS(buffer1, buffer2, msTimeout);
   let result = [];
   let tail1 = buffer1.length;
   let tail2 = buffer2.length;
@@ -175,6 +202,7 @@ function diffPatch(buffer1, buffer2) {
   }
 
   for (let candidate = lcs; candidate !== null; candidate = candidate.chain) {
+    assertTimeout(startTime, msTimeout);
     const mismatchLength1 = tail1 - candidate.buffer1index - 1;
     const mismatchLength2 = tail2 - candidate.buffer2index - 1;
     tail1 = candidate.buffer1index;
@@ -205,7 +233,8 @@ function diffPatch(buffer1, buffer2) {
 //
 // (http://www.cis.upenn.edu/~bcpierce/papers/diff3-short.pdf)
 //
-function diff3MergeRegions(a, o, b) {
+function diff3MergeRegions(a, o, b, msTimeout) {
+  const startTime = Date.now();
 
   // "hunks" are array subsets where `a` or `b` are different from `o`
   // https://www.gnu.org/software/diffutils/manual/html_node/diff3-Hunks.html
@@ -221,8 +250,8 @@ function diff3MergeRegions(a, o, b) {
     });
   }
 
-  diffIndices(o, a).forEach(item => addHunk(item, 'a'));
-  diffIndices(o, b).forEach(item => addHunk(item, 'b'));
+  diffIndices(o, a, calcRemainingTimeout(startTime, msTimeout)).forEach(item => addHunk(item, 'a'));
+  diffIndices(o, b, calcRemainingTimeout(startTime, msTimeout)).forEach(item => addHunk(item, 'b'));
   hunks.sort((x,y) => x.oStart - y.oStart);
 
   let results = [];
@@ -242,6 +271,7 @@ function diff3MergeRegions(a, o, b) {
   }
 
   while (hunks.length) {
+    assertTimeout(startTime, msTimeout);
     let hunk = hunks.shift();
     let regionStart = hunk.oStart;
     let regionEnd = hunk.oStart + hunk.oLength;
@@ -250,6 +280,7 @@ function diff3MergeRegions(a, o, b) {
 
     // Try to pull next overlapping hunk into this region
     while (hunks.length) {
+      assertTimeout(startTime, msTimeout);
       const nextHunk = hunks[0];
       const nextHunkStart = nextHunk.oStart;
       if (nextHunkStart > regionEnd) break;   // no overlap
@@ -281,6 +312,7 @@ function diff3MergeRegions(a, o, b) {
         b: [b.length, -1, o.length, -1]
       };
       while (regionHunks.length) {
+        assertTimeout(startTime, msTimeout);
         hunk = regionHunks.shift();
         const oStart = hunk.oStart;
         const oEnd = oStart + hunk.oLength;
@@ -326,9 +358,11 @@ function diff3MergeRegions(a, o, b) {
 // between 'ok' and 'conflict' blocks.
 // A "false conflict" is where `a` and `b` both change the same from `o`
 function diff3Merge(a, o, b, options) {
+  const startTime = Date.now();
   let defaults = {
     excludeFalseConflicts: true,
-    stringSeparator: /\s+/
+    stringSeparator: /\s+/,
+    msTimeout: undefined
   };
   options = Object.assign(defaults, options);
 
@@ -337,7 +371,7 @@ function diff3Merge(a, o, b, options) {
   if (typeof b === 'string') b = b.split(options.stringSeparator);
 
   let results = [];
-  const regions = diff3MergeRegions(a, o, b);
+  const regions = diff3MergeRegions(a, o, b, options.msTimeout);
 
   let okBuffer = [];
   function flushOk() {
@@ -356,6 +390,7 @@ function diff3Merge(a, o, b, options) {
   }
 
   regions.forEach(region =>  {
+    assertTimeout(startTime, options.msTimeout);
     if (region.stable) {
       okBuffer.push(...region.bufferContent);
     } else {
@@ -383,9 +418,11 @@ function diff3Merge(a, o, b, options) {
 
 
 function mergeDiff3(a, o, b, options) {
+  const startTime = Date.now();
   const defaults = {
     excludeFalseConflicts: true,
     stringSeparator: /\s+/,
+    msTimeout: undefined,
     label: {}
   };
   options = Object.assign(defaults, options);
@@ -400,6 +437,7 @@ function mergeDiff3(a, o, b, options) {
   let result = [];
 
   regions.forEach(region => {
+    assertTimeout(startTime, options.msTimeout);
     if (region.ok) {
       result = result.concat(region.ok);
     } else if (region.conflict) {
@@ -424,9 +462,11 @@ function mergeDiff3(a, o, b, options) {
 
 
 function merge(a, o, b, options) {
+  const startTime = Date.now();
   const defaults = {
     excludeFalseConflicts: true,
     stringSeparator: /\s+/,
+    msTimeout: undefined,
     label: {}
   };
   options = Object.assign(defaults, options);
@@ -440,6 +480,7 @@ function merge(a, o, b, options) {
   let result = [];
 
   regions.forEach(region => {
+    assertTimeout(startTime, options.msTimeout);
     if (region.ok) {
       result = result.concat(region.ok);
     } else if (region.conflict) {
@@ -462,9 +503,11 @@ function merge(a, o, b, options) {
 
 
 function mergeDigIn(a, o, b, options) {
+  const startTime = Date.now();
   const defaults = {
     excludeFalseConflicts: true,
     stringSeparator: /\s+/,
+    msTimeout: undefined,
     label: {}
   };
   options = Object.assign(defaults, options);
@@ -478,11 +521,17 @@ function mergeDigIn(a, o, b, options) {
   let result = [];
 
   regions.forEach(region => {
+    assertTimeout(startTime, options.msTimeout);
     if (region.ok) {
       result = result.concat(region.ok);
     } else {
-      const c = diffComm(region.conflict.a, region.conflict.b);
+      const c = diffComm(
+        region.conflict.a,
+        region.conflict.b,
+        calcRemainingTimeout(startTime, options.msTimeout)
+      );
       for (let j = 0; j < c.length; j++) {
+        assertTimeout(startTime, options.msTimeout);
         let inner = c[j];
         if (inner.common) {
           result = result.concat(inner.common);
@@ -509,7 +558,8 @@ function mergeDigIn(a, o, b, options) {
 
 // Applies a patch to a buffer.
 // Given buffer1 and buffer2, `patch(buffer1, diffPatch(buffer1, buffer2))` should give buffer2.
-function patch(buffer, patch) {
+function patch(buffer, patch, msTimeout) {
+  const startTime = Date.now();
   let result = [];
   let currOffset = 0;
 
@@ -521,6 +571,7 @@ function patch(buffer, patch) {
   }
 
   for (let chunkIndex = 0; chunkIndex < patch.length; chunkIndex++) {
+    assertTimeout(startTime, msTimeout);
     let chunk = patch[chunkIndex];
     advanceTo(chunk.buffer1.offset);
     for (let itemIndex = 0; itemIndex < chunk.buffer2.chunk.length; itemIndex++) {

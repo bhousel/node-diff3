@@ -64,5 +64,19 @@ test('diff3MergeRegions', t => {
     t.end();
   });
 
+  t.test('with timeout', t => {
+    const o = ''.padEnd(1024 * 1024 * 10, 'o  ').split(/\s+/);
+    const a = ''.padEnd(1024 * 1024 * 10, 'a  ').split(/\s+/);
+    const b = ''.padEnd(1024 * 1024 * 10, 'b  ').split(/\s+/);
+    t.throws(() => Diff3.diff3MergeRegions(a, o, b, 1000), new Diff3.TimeoutError());
+    t.doesNotThrow(() => Diff3.diff3MergeRegions(
+      a.slice(0, 1024),
+      o.slice(0, 1024),
+      b.slice(0, 1024),
+      1000
+    ));
+    t.end();
+  });
+
   t.end();
 });

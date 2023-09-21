@@ -31,5 +31,13 @@ test('LCS', t => {
     t.end();
   });
 
+  t.test('with timeout', t => {
+    const a = ''.padEnd(1024 * 1024 * 10, 'a  ').split(/\s+/);
+    const b = ''.padEnd(1024 * 1024 * 10, 'b  ').split(/\s+/);
+    t.throws(() => Diff3.LCS(a, b, 1000), new Diff3.TimeoutError());
+    t.doesNotThrow(() => Diff3.LCS(a.slice(0, 1024), b.slice(0, 1024), 1000));
+    t.end();
+  });
+
   t.end();
 });
