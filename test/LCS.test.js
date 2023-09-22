@@ -32,7 +32,7 @@ test('LCS', t => {
     t.end();
   });
 
-  testTimeout(t, ({ a, b, timeout }) => Diff3.LCS(a, b, timeout));
+  testTimeout(t, timeout => Diff3.LCS(['a'], ['b'], timeout));
 
   t.end();
 });

@@ -10,10 +10,7 @@ export function testTimeout(t, func) {
     t.afterEach(() => { Date.now = originalDateNow; });
   
     const timeout = 1000;
-    const a = ''.padEnd(1024, 'a  ').split(/\s+/);
-    const o = ''.padEnd(1024, 'o  ').split(/\s+/);
-    const b = ''.padEnd(1024, 'b  ').split(/\s+/);
-  
+
     t.test('should throw', t => {
       let time = 0;
       Date.now = () =>  {
@@ -21,13 +18,13 @@ export function testTimeout(t, func) {
         time += timeout + 1;
         return res;
       };
-      t.throws(() => func({ a, o, b, timeout }), new Diff3.TimeoutError());
+      t.throws(() => func(timeout), new Diff3.TimeoutError());
       t.end();
     });
   
     t.test('should not throw', t => {
       Date.now = () =>  0;
-      t.doesNotThrow(() => func({ a, o, b, timeout }));
+      t.doesNotThrow(() => func(timeout));
       t.end();
     });
   

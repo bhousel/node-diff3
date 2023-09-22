@@ -77,7 +77,7 @@ description: "description"`;
     t.end();
   });
 
-  testTimeout(t, ({ a, o, b, timeout }) => Diff3.merge(a, o, b, { timeout }));
+  testTimeout(t, timeout => Diff3.merge(['a'], ['o'], ['b'], { timeout }));
   
   t.end();
 });

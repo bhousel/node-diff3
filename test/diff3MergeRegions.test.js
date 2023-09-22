@@ -65,7 +65,7 @@ test('diff3MergeRegions', t => {
     t.end();
   });
 
-  testTimeout(t, ({ a, o, b, timeout }) => Diff3.diff3MergeRegions(a, o, b, timeout));
+  testTimeout(t, timeout => Diff3.diff3MergeRegions(['a'], ['o'], ['b'], timeout));
 
   t.end();
 });

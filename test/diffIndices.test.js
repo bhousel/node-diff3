@@ -27,7 +27,7 @@ test('diffIndices', t => {
     t.end();
   });
   
-  testTimeout(t, ({ a, b, timeout }) => Diff3.diffIndices(a, b, timeout));
+  testTimeout(t, timeout => Diff3.diffIndices(['a'], ['b'], timeout));
 
   t.end();
 });
