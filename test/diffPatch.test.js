@@ -1,5 +1,6 @@
 import { test } from 'tap';
 import * as Diff3 from '../index.mjs';
+import { testTimeout } from './timeout.js';
 
 const a = ['AA', 'a', 'b', 'c', 'ZZ', 'new', '00', 'a', 'a', 'M', '99'];
 const b = ['AA', 'a', 'd', 'c', 'ZZ', '11', 'M', 'z', 'z', '99'];
@@ -39,35 +40,9 @@ test('diffPatch', t => {
     t.strictSame(b0, b);
     t.end();
   });
-
-  t.test('with timeout', t => {
-    let originalDateNow;
-    t.before(() => { originalDateNow = Date.now; });
-    t.afterEach(() => { Date.now = originalDateNow; });
-
-    const a = ''.padEnd(1024, 'a  ').split(/\s+/);
-    const b = ''.padEnd(1024, 'b  ').split(/\s+/);
-
-    t.test('should throw', t => {
-      let time = 0;
-      Date.now = () =>  {
-        const res = time;
-        time += 1001;
-        return res;
-      };
-      t.throws(() => Diff3.diffPatch(a, b, 1000), new Diff3.TimeoutError());
-      t.end();
-    });
-
-    t.test('should not throw', t => {
-      Date.now = () =>  0;
-      t.doesNotThrow(() => Diff3.diffPatch(a, b, 1000));
-      t.end();
-    });
-
-    t.end();
-  });
-
+  
+  testTimeout(t, ({ a, b, timeout }) => Diff3.diffPatch(a, b, timeout));
+  
   t.end();
 });
 

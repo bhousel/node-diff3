@@ -1,5 +1,6 @@
 import { test } from 'tap';
 import * as Diff3 from '../index.mjs';
+import { testTimeout } from './timeout.js';
 
 test('diff3Merge', t => {
 
@@ -162,34 +163,7 @@ description: "description"`;
     t.end();
   });
 
-  t.test('with timeout', t => {
-    let originalDateNow;
-    t.before(() => { originalDateNow = Date.now; });
-    t.afterEach(() => { Date.now = originalDateNow; });
-
-    const o = ''.padEnd(1024, 'o  ');
-    const a = ''.padEnd(1024, 'a  ');
-    const b = ''.padEnd(1024, 'b  ');
-
-    t.test('should throw', t => {
-      let time = 0;
-      Date.now = () =>  {
-        const res = time;
-        time += 1001;
-        return res;
-      };
-      t.throws(() => Diff3.diff3Merge(a, o, b, { timeout: 1000 }), new Diff3.TimeoutError());
-      t.end();
-    });
-
-    t.test('should not throw', t => {
-      Date.now = () =>  0;
-      t.doesNotThrow(() => Diff3.diff3Merge(a, o, b, { timeout: 1000 }));
-      t.end();
-    });
-
-    t.end();
-  });
+  testTimeout(t, ({ a, o, b, timeout }) => Diff3.diff3Merge(a, o, b, { timeout }));
 
   t.end();
 });
