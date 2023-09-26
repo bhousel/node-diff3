@@ -1,3 +1,5 @@
+export class TimeoutError extends Error {}
+
 export interface ILCSResult {
   buffer1index: number;
   buffer2index: number;
@@ -11,7 +13,7 @@ export interface ILCSResult {
  * @returns {ILCSResult}
  * @constructor
  */
-export function LCS<T>(buffer1: T[], buffer2: T[]): ILCSResult;
+export function LCS<T>(buffer1: T[], buffer2: T[], timeout?: number): ILCSResult;
 
 export interface ICommResult<T> {
   buffer1: T[];
@@ -25,7 +27,7 @@ export interface ICommResult<T> {
  * @param {T[]} buffer2
  * @returns {Array<ICommResult<T>>}
  */
-export function diffComm<T>(buffer1: T[], buffer2: T[]): ICommResult<T>[];
+export function diffComm<T>(buffer1: T[], buffer2: T[], timeout?: number): ICommResult<T>[];
 
 export interface IDiffIndicesResult<T> {
   buffer1: [number, number];
@@ -44,7 +46,8 @@ export interface IDiffIndicesResult<T> {
  */
 export function diffIndices<T>(
   buffer1: T[],
-  buffer2: T[]
+  buffer2: T[],
+  timeout?: number
 ): IDiffIndicesResult<T>[];
 
 export interface IChunk<T> {
@@ -65,9 +68,9 @@ export interface IPatchRes<T> {
  * @param {T[]} buffer2
  * @returns {IPatchRes<T>[]}
  */
-export function diffPatch<T>(buffer1: T[], buffer2: T[]): IPatchRes<T>[];
+export function diffPatch<T>(buffer1: T[], buffer2: T[], timeout?: number): IPatchRes<T>[];
 
-export function patch<T>(buffer: T[], patch: IPatchRes<T>[]): T[];
+export function patch<T>(buffer: T[], patch: IPatchRes<T>[], timeout?: number): T[];
 
 export interface IStableRegion<T> {
   stable: true;
@@ -110,7 +113,7 @@ export type IRegion<T> = IStableRegion<T> | IUnstableRegion<T>;
  * @param {T[]} b
  * @returns {IRegion<T>[]}
  */
-export function diff3MergeRegions<T>(a: T[], o: T[], b: T[]): IRegion<T>[];
+export function diff3MergeRegions<T>(a: T[], o: T[], b: T[], timeout?: number): IRegion<T>[];
 
 export interface MergeRegion<T> {
   ok?: T[];
@@ -150,14 +153,16 @@ export function diff3Merge<T>(
   a: string | T[],
   o: string | T[],
   b: string | T[],
-  options?: IMergeOptions
+  options?: IMergeOptions,
+  timeout?: number
 ): MergeRegion<T>[];
 
 export function merge<T>(
   a: string | T[],
   o: string | T[],
   b: string | T[],
-  options?: IMergeOptions
+  options?: IMergeOptions,
+  timeout?: number
 ): MergeResult;
 
 export function mergeDiff3<T>(
@@ -170,12 +175,14 @@ export function mergeDiff3<T>(
       o?: string;
       b?: string;
     }
-  }
+  },
+  timeout?: number
 ): MergeResult;
 
 export function mergeDigIn<T>(
   a: string | T[],
   o: string | T[],
   b: string | T[],
-  options?: IMergeOptions
+  options?: IMergeOptions,
+  timeout?: number
 ): MergeResult;

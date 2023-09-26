@@ -1,5 +1,6 @@
 import { test } from 'tap';
 import * as Diff3 from '../index.mjs';
+import { testTimeout } from './timeout.js';
 
 const a = ['AA', 'a', 'b', 'c', 'ZZ', 'new', '00', 'a', 'a', 'M', '99'];
 const b = ['AA', 'a', 'd', 'c', 'ZZ', '11', 'M', 'z', 'z', '99'];
@@ -39,7 +40,9 @@ test('diffPatch', t => {
     t.strictSame(b0, b);
     t.end();
   });
-
+  
+  testTimeout(t, timeout => Diff3.diffPatch(a, b, timeout));
+  
   t.end();
 });
 

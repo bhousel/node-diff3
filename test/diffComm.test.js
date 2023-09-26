@@ -1,5 +1,6 @@
 import { test } from 'tap';
 import * as Diff3 from '../index.mjs';
+import { testTimeout } from './timeout.js';
 
 test('diffComm', t => {
 
@@ -38,6 +39,8 @@ test('diffComm', t => {
 
     t.end();
   });
+
+  testTimeout(t, timeout => Diff3.diffComm(['a'], ['b'], timeout));
 
   t.end();
 });

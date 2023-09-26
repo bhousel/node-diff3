@@ -1,5 +1,6 @@
 import { test } from 'tap';
 import * as Diff3 from '../index.mjs';
+import { testTimeout } from './timeout.js';
 
 test('LCS', t => {
 
@@ -30,6 +31,8 @@ test('LCS', t => {
 
     t.end();
   });
+
+  testTimeout(t, timeout => Diff3.LCS(['a'], ['b'], timeout));
 
   t.end();
 });

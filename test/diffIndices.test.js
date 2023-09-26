@@ -1,5 +1,6 @@
 import { test } from 'tap';
 import * as Diff3 from '../index.mjs';
+import { testTimeout } from './timeout.js';
 
 test('diffIndices', t => {
 
@@ -25,6 +26,8 @@ test('diffIndices', t => {
 
     t.end();
   });
+  
+  testTimeout(t, timeout => Diff3.diffIndices(['a'], ['b'], timeout));
 
   t.end();
 });

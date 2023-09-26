@@ -1,5 +1,6 @@
 import { test } from 'tap';
 import * as Diff3 from '../index.mjs';
+import { testTimeout } from './timeout.js';
 
 test('merge', t => {
 
@@ -76,5 +77,7 @@ description: "description"`;
     t.end();
   });
 
+  testTimeout(t, timeout => Diff3.merge(['a'], ['o'], ['b'], undefined, timeout));
+  
   t.end();
 });

@@ -1,5 +1,6 @@
 import { test } from 'tap';
 import * as Diff3 from '../index.mjs';
+import { testTimeout } from './timeout.js';
 
 test('diff3MergeRegions', t => {
 
@@ -63,6 +64,8 @@ test('diff3MergeRegions', t => {
 
     t.end();
   });
+
+  testTimeout(t, timeout => Diff3.diff3MergeRegions(['a'], ['o'], ['b'], timeout));
 
   t.end();
 });
