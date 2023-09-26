@@ -135,7 +135,6 @@ export interface MergeResult {
 export interface IMergeOptions {
   excludeFalseConflicts?: boolean;
   stringSeparator?: string | RegExp;
-  timeout?: number;
 }
 
 /**
@@ -154,14 +153,16 @@ export function diff3Merge<T>(
   a: string | T[],
   o: string | T[],
   b: string | T[],
-  options?: IMergeOptions
+  options?: IMergeOptions,
+  timeout?: number
 ): MergeRegion<T>[];
 
 export function merge<T>(
   a: string | T[],
   o: string | T[],
   b: string | T[],
-  options?: IMergeOptions
+  options?: IMergeOptions,
+  timeout?: number
 ): MergeResult;
 
 export function mergeDiff3<T>(
@@ -174,12 +175,14 @@ export function mergeDiff3<T>(
       o?: string;
       b?: string;
     }
-  }
+  },
+  timeout?: number
 ): MergeResult;
 
 export function mergeDigIn<T>(
   a: string | T[],
   o: string | T[],
   b: string | T[],
-  options?: IMergeOptions
+  options?: IMergeOptions,
+  timeout?: number
 ): MergeResult;
