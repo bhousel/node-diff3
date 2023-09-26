@@ -83,7 +83,7 @@ description: "description"`;
     t.end();
   });
 
-  testTimeout(t, timeout => Diff3.mergeDiff3(['a'], ['o'], ['b'], { timeout }));
+  testTimeout(t, timeout => Diff3.mergeDiff3(['a'], ['o'], ['b'], undefined, timeout));
 
   t.end();
 });

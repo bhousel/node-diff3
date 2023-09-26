@@ -432,7 +432,7 @@ function mergeDiff3(a, o, b, options, timeout) {
   const xSection = '=======';
   const bSection = '>>>>>>>' + (options.label.b ? ` ${options.label.b}` : '');
 
-  const regions = diff3Merge(a, o, b, options);
+  const regions = diff3Merge(a, o, b, options, assertTimeout);
   let conflict = false;
   let result = [];
 
@@ -474,7 +474,7 @@ function merge(a, o, b, options, timeout) {
   const xSection = '=======';
   const bSection = '>>>>>>>' + (options.label.b ? ` ${options.label.b}` : '');
 
-  const regions = diff3Merge(a, o, b, options);
+  const regions = diff3Merge(a, o, b, options, assertTimeout);
   let conflict = false;
   let result = [];
 
@@ -514,7 +514,7 @@ function mergeDigIn(a, o, b, options, timeout) {
   const xSection = '=======';
   const bSection = '>>>>>>>' + (options.label.b ? ` ${options.label.b}` : '');
 
-  const regions = diff3Merge(a, o, b, options);
+  const regions = diff3Merge(a, o, b, options, assertTimeout);
   let conflict = false;
   let result = [];
 

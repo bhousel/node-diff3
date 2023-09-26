@@ -51,7 +51,7 @@ test('mergeDigIn', t => {
     t.end();
   });
   
-  testTimeout(t, timeout => Diff3.mergeDigIn(['a'], ['o'], ['b'], { timeout }));
+  testTimeout(t, timeout => Diff3.mergeDigIn(['a'], ['o'], ['b'], undefined, timeout));
 
   t.end();
 });
