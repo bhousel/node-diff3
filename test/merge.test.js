@@ -1,22 +1,22 @@
-import { test } from 'tap';
+import { test } from 'node:test';
+import { strict as assert } from 'node:assert';
 import * as Diff3 from '../index.mjs';
 
-test('merge', t => {
+test('merge', async t => {
 
-  t.test('returns conflict: false if no conflicts', t => {
+  await t.test('returns conflict: false if no conflicts', t => {
     const o = ['AA'];
     const a = ['AA'];
     const b = ['AA'];
     const expected = ['AA'];
 
     const r = Diff3.merge(a, o, b);
-    t.notOk(r.conflict);
-    t.same(r.result, expected);
-    t.end();
+    assert.equal(r.conflict, false);
+    assert.deepEqual(r.result, expected);
   });
 
 
-  t.test('returns a diff3-style merge result', t => {
+  await t.test('returns a diff3-style merge result', t => {
     const o = ['AA', 'ZZ', '00', 'M', '99'];
     const a = ['AA', 'a', 'b', 'c', 'ZZ', 'new', '00', 'a', 'a', 'M', '99'];
     const b = ['AA', 'a', 'd', 'c', 'ZZ', '11', 'M', 'z', 'z', '99'];
@@ -47,13 +47,12 @@ test('merge', t => {
     ];
 
     const r = Diff3.merge(a, o, b);
-    t.ok(r.conflict);
-    t.same(r.result, expected);
-    t.end();
+    assert.equal(r.conflict, true);
+    assert.deepEqual(r.result, expected);
   });
 
 
-  t.test('yaml comparison - issue #46', t => {
+  await t.test('yaml comparison - issue #46', t => {
     const o = `title: "title"
 description: "description"`;
     const a = `title: "title"
@@ -71,10 +70,8 @@ description: "description"`;
     ];
 
     const r = Diff3.merge(a, o, b, { stringSeparator: /[\r\n]+/ });
-    t.ok(r.conflict);
-    t.same(r.result, expected);
-    t.end();
+    assert.equal(r.conflict, true);
+    assert.deepEqual(r.result, expected);
   });
 
-  t.end();
 });
