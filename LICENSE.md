@@ -8,7 +8,7 @@ For more detail please visit:
 
 Copyright (c) 2006, 2008 Tony Garnock-Jones &lt;tonyg@lshift.net&gt;<br/>
 Copyright (c) 2006, 2008 LShift Ltd. &lt;query@lshift.net&gt;<br/>
-Copyright (c) 2019 Bryan Housel &lt;bhousel@gmail.com&gt;<br/>
+Copyright (c) 2019-2025 Bryan Housel &lt;bhousel@gmail.com&gt;<br/>
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation files
