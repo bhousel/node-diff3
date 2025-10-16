@@ -1,10 +1,11 @@
-import { test } from 'node:test';
-import { strict as assert } from 'node:assert';
-import * as Diff3 from '../index.mjs';
+import { describe, it } from 'bun:test';
+import { strict as assert } from 'bun:assert';
+import * as Diff3 from '../src/diff3.mjs';
 
-test('diff3MergeRegions', async t => {
 
-  await t.test('returns results of 3-way diff from o,a,b arrays', t => {
+describe('diff3MergeRegions', () => {
+
+  it('returns results of 3-way diff from o,a,b arrays', () => {
     const o = ['AA', 'ZZ', '00', 'M', '99'];
     const a = ['AA', 'a', 'b', 'c', 'ZZ', 'new', '00', 'a', 'a', 'M', '99'];
     const b = ['AA', 'a', 'd', 'c', 'ZZ', '11', 'M', 'z', 'z', '99'];
