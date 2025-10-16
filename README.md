@@ -39,7 +39,7 @@ You can also use **node-diff3** directly in a web browser.  A good way to do thi
 When you load this file in a `<script>` tag, you'll get a `Diff3` global to use elsewhere in your scripts:
 ```html
 <head>
-<script src="https://cdn.jsdelivr.net/npm/node-diff3@3.1/dist/index.iife.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/node-diff3@3.1/dist/diff3.iife.min.js"></script>
 </head>
 …
 <script>
@@ -51,6 +51,12 @@ When you load this file in a `<script>` tag, you'll get a `Diff3` global to use 
 ```
 
 👉 This project uses modern JavaScript syntax for use in supported node versions and modern browsers.  If you need support for legacy environments like ES5 or Internet Explorer, you'll need to build your own bundle with something like [Babel](https://babeljs.io/docs/en/index.html).
+
+&nbsp;
+
+## Contributing
+
+See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more info.
 
 &nbsp;
 

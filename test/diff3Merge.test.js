@@ -1,10 +1,11 @@
-import { test } from 'node:test';
-import { strict as assert } from 'node:assert';
-import * as Diff3 from '../index.mjs';
+import { describe, it } from 'bun:test';
+import { strict as assert } from 'bun:assert';
+import * as Diff3 from '../src/diff3.mjs';
 
-test('diff3Merge', async t => {
 
-  await t.test('performs diff3 merge on arrays', t => {
+describe('diff3Merge', () => {
+
+  it('performs diff3 merge on arrays', () => {
     const o = ['AA', 'ZZ', '00', 'M', '99'];
     const a = ['AA', 'a', 'b', 'c', 'ZZ', 'new', '00', 'a', 'a', 'M', '99'];
     const b = ['AA', 'a', 'd', 'c', 'ZZ', '11', 'M', 'z', 'z', '99'];
@@ -60,7 +61,7 @@ test('diff3Merge', async t => {
   });
 
 
-  await t.test('strings split on whitespace by default to avoid surprises - issue #9', t => {
+  it('strings split on whitespace by default to avoid surprises - issue #9', () => {
     const o = 'was touring';
     const a = 'was here   touring';
     const b = 'was into touring';
@@ -78,7 +79,7 @@ test('diff3Merge', async t => {
     assert.deepEqual(result[2].conflict, undefined);
   });
 
-  await t.test('strings can optionally split on given separator', t => {
+  it('strings can optionally split on given separator', () => {
     const o = 'new hampshire, new mexico, north carolina';
     const a = 'new hampshire, new jersey,    north carolina';
     const b = 'new hampshire, new york, north carolina';
@@ -97,7 +98,7 @@ test('diff3Merge', async t => {
   });
 
 
-  await t.test('excludes false conflicts by default', t => {
+  it('excludes false conflicts by default', () => {
     const o = 'AA ZZ';
     const a = 'AA a b c ZZ';
     const b = 'AA a b c ZZ';
@@ -108,7 +109,7 @@ test('diff3Merge', async t => {
   });
 
 
-  await t.test('can include false conflicts with option', t => {
+  it('can include false conflicts with option', () => {
     const o = 'AA ZZ';
     const a = 'AA a b c ZZ';
     const b = 'AA a b c ZZ';
@@ -127,7 +128,7 @@ test('diff3Merge', async t => {
   });
 
 
-  await t.test('avoids improper hunk sorting - see openstreetmap/iD#3058', t => {
+  it('avoids improper hunk sorting - see openstreetmap/iD#3058', () => {
     const o = ['n4100522632', 'n4100697091', 'n4100697136', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4102677890', 'n4094374176'];
     const a = ['n4100522632', 'n4100697091', 'n4100697136', 'n-10000', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4102677890', 'n4094374176'];
     const b = ['n4100522632', 'n4100697091', 'n4100697136', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4105613618', 'n4102677890', 'n4105613617', 'n4094374176'];
@@ -138,7 +139,7 @@ test('diff3Merge', async t => {
   });
 
 
-  await t.test('yaml comparison - issue #46', t => {
+  it('yaml comparison - issue #46', () => {
     const o = `title: "title"
 description: "description"`;
     const a = `title: "title"

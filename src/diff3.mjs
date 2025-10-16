@@ -22,7 +22,6 @@ export {
 //
 // Expects two arrays, finds longest common sequence
 function LCS(buffer1, buffer2) {
-
   let equivalenceClasses = {};
   for (let j = 0; j < buffer2.length; j++) {
     const item = buffer2[j];

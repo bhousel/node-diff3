@@ -1,10 +1,11 @@
-import { test } from 'node:test';
-import { strict as assert } from 'node:assert';
-import * as Diff3 from '../index.mjs';
+import { describe, it } from 'bun:test';
+import { strict as assert } from 'bun:assert';
+import * as Diff3 from '../src/diff3.mjs';
 
-test('mergeDiff3', async t => {
 
-  await t.test('returns conflict: false if no conflicts', t => {
+describe('mergeDiff3', () => {
+
+  it('returns conflict: false if no conflicts', () => {
     const o = ['AA'];
     const a = ['AA'];
     const b = ['AA'];
@@ -16,7 +17,7 @@ test('mergeDiff3', async t => {
   });
 
 
-  await t.test('performs merge diff3 on arrays', t => {
+  it('performs merge diff3 on arrays', () => {
     const o = ['AA', 'ZZ', '00', 'M', '99'];
     const a = ['AA', 'a', 'b', 'c', 'ZZ', 'new', '00', 'a', 'a', 'M', '99'];
     const b = ['AA', 'a', 'd', 'c', 'ZZ', '11', 'M', 'z', 'z', '99'];
@@ -55,7 +56,7 @@ test('mergeDiff3', async t => {
   });
 
 
-  t.test('yaml comparison - issue #46', t => {
+  it('yaml comparison - issue #46', () => {
     const o = `title: "title"
 description: "description"`;
     const a = `title: "title"
