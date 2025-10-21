@@ -29,7 +29,7 @@
   },
   "scripts": {
     "all": "run-s clean lint build test",
-    "clean": "rm -rf ./dist",
+    "clean": "bun ./scripts/clean.ts",
     "build": "bun ./scripts/build.ts",
     "test": "bun test --dots --coverage ./test/*.js",
     "lint": "eslint ./src/diff3.mjs ./test/*.js"
