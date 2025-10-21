@@ -15,7 +15,7 @@ _Breaking changes, which may affect downstream projects, are marked with a_ тЪая
 [#xxx]: https://github.com/bhousel/node-diff3/issues/xxx
 -->
 
-# 3.2.0
+## 3.2.0
 ##### 2025-Oct-21
 * This project uses [`bun`](https://bun.com/) now, for simpler developer tooling ([#85])
 
