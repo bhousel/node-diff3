@@ -22,21 +22,22 @@
   ],
   "type": "module",
   "exports": {
+    "bun": "./src/diff3.mjs",
     "types": "./src/diff3.d.ts",
     "import": "./dist/diff3.mjs",
     "require": "./dist/diff3.cjs",
     "browser": "./dist/diff3.iife.js"
   },
   "scripts": {
-    "all": "run-s clean lint build test",
+    "all": "run-s clean lint build:js test",
     "clean": "bun ./scripts/clean.ts",
-    "build": "bun ./scripts/build.ts",
+    "build:js": "bun ./scripts/build_js.ts",
     "test": "bun test --dots --coverage ./test/*.js",
     "lint": "eslint ./src/diff3.mjs ./test/*.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.38.0",
-    "@types/bun": "^1.3.0",
+    "@types/bun": "^1.3.1",
     "eslint": "^9.38.0",
     "npm-run-all2": "^8.0.4"
   },
@@ -45,7 +46,6 @@
     "access": "public"
   },
   "engines": {
-    "bun": ">=1.3.0",
-    "node": ">=18"
+    "bun": ">=1.3.0"
   }
 }
