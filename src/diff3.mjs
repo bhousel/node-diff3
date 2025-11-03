@@ -41,9 +41,7 @@ function LCS(buffer1, buffer2) {
     let r = 0;
     let c = candidates[0];
 
-    for (let jx = 0; jx < buffer2indices.length; jx++) {
-      const j = buffer2indices[jx];
-
+    for (const j of buffer2indices) {
       let s;
       for (s = r; s < candidates.length; s++) {
         if ((candidates[s].buffer2index < j) && ((s === candidates.length - 1) || (candidates[s + 1].buffer2index > j))) {
@@ -481,8 +479,7 @@ function mergeDigIn(a, o, b, options) {
       result = result.concat(region.ok);
     } else {
       const c = diffComm(region.conflict.a, region.conflict.b);
-      for (let j = 0; j < c.length; j++) {
-        let inner = c[j];
+      for (const inner of c) {
         if (inner.common) {
           result = result.concat(inner.common);
         } else {
@@ -519,11 +516,10 @@ function patch(buffer, patch) {
     }
   }
 
-  for (let chunkIndex = 0; chunkIndex < patch.length; chunkIndex++) {
-    let chunk = patch[chunkIndex];
+  for (const chunk of patch) {
     advanceTo(chunk.buffer1.offset);
-    for (let itemIndex = 0; itemIndex < chunk.buffer2.chunk.length; itemIndex++) {
-      result.push(chunk.buffer2.chunk[itemIndex]);
+    for (const item of chunk.buffer2.chunk) {
+      result.push(item);
     }
     currOffset += chunk.buffer1.length;
   }

@@ -1,4 +1,6 @@
+import globals from 'globals';
 import js from '@eslint/js';
+import ts from 'typescript-eslint';
 
 const rules = {
   rules: {
@@ -16,10 +18,10 @@ const rules = {
     "eqeqeq": ["error", "smart"],
     "func-call-spacing": ["warn", "never"],
     "grouped-accessor-pairs": "error",
-    "indent": ["off", 4],
+    "indent": ["off", 2],
     "keyword-spacing": "error",
     "linebreak-style": ["error", "unix"],
-    "no-await-in-loop": "error",
+    "no-await-in-loop": "off",
     "no-caller": "error",
     "no-catch-shadow": "error",
     "no-console": "warn",
@@ -34,7 +36,7 @@ const rules = {
     "no-floating-decimal": "error",
     "no-global-assign": "error",
     "no-implied-eval": "error",
-    "no-invalid-this": "off",
+    "no-invalid-this": "error",
     "no-iterator": "error",
     "no-labels": "error",
     "no-label-var": "error",
@@ -42,6 +44,7 @@ const rules = {
     "no-loop-func": "error",
     "no-loss-of-precision": "error",
     "no-multi-str": "error",
+    "no-native-reassign": "error",
     "no-new": "error",
     "no-new-func": "error",
     "no-new-wrappers": "error",
@@ -70,7 +73,7 @@ const rules = {
     "no-unreachable": "warn",
     "no-unreachable-loop": "warn",
     "no-unused-expressions": "error",
-    "no-unused-vars": ["warn", { "vars": "all", "args": "none", "caughtErrors": "none" }],
+    "no-unused-vars": "off", // typescript-eslint will check it
     "no-use-before-define": ["off", "nofunc"],
     "no-useless-backreference": "warn",
     "no-useless-call": "warn",
@@ -83,19 +86,44 @@ const rules = {
     "no-warning-comments": "warn",
     "no-whitespace-before-property": "warn",
     "no-with": "error",
-    "quotes": ["error", "single", { "allowTemplateLiterals": true }],
     "radix": ["error", "always"],
     "require-atomic-updates": "error",
     "require-await": "error",
     "semi": ["error", "always"],
     "semi-spacing": "error",
     "space-unary-ops": "error",
-    "wrap-regex": "off"
+    "wrap-regex": "off",
+
+    "@typescript-eslint/array-type": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-inferrable-types": ["warn", { "ignoreParameters": true }],
+    "@typescript-eslint/no-unused-vars": ["warn", { "vars": "all", "args": "none", "caughtErrors": "none", "destructuredArrayIgnorePattern": "^_" }]
   }
 };
 
 export default [
   js.configs.recommended,
-  rules
+  ...ts.configs.recommended,
+  ...ts.configs.stylistic,
+  rules,
+  {
+    files: [ '**/*.{js,ts}' ],
+    languageOptions: {
+      globals: {
+        ...globals.browser
+      }
+    }
+  },
+  {
+    files: [ 'scripts/*', 'test/*' ],
+    languageOptions: {
+      globals: {
+        Bun: false
+      }
+    },
+    rules: {
+      "no-console": "off"
+    }
+  }
 ];
-
