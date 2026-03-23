@@ -1,0 +1,11 @@
+* text=lf
+*.bat eol=crlf
+*.js eol=lf
+*.mjs eol=lf
+*.cjs eol=lf
+*.ts eol=lf
+
+*.json linguist-detectable
+*.md linguist-documentation
+
+dist/** linguist-generated

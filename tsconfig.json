@@ -1,20 +1,42 @@
 {
-  "include": [""],
   "compilerOptions": {
-    "module": "esnext",
+    // Environment setup & latest features
+    "lib": ["ESNext"],
+    "target": "ESNext",
+    "module": "Preserve",
+    "moduleDetection": "force",
+    "allowJs": true,
+
+    // Bundler mode
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "resolveJsonModule": true,
+
+    // Declaration output
     "declaration": true,
     "emitDeclarationOnly": true,
     "outDir": "dist",
-    "esModuleInterop": true,
-    "moduleResolution": "node",
+
+    // Best practices
+    "strict": true,
     "noImplicitAny": false,
     "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "resolveJsonModule": true,
-    "strictBindCallApply": true,
-    "strictFunctionTypes": true,
-    "strictPropertyInitialization": true,
-    "strictNullChecks": true,
-    "target": "esnext"
-  }
+    "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+
+    // Some stricter flags (disabled by default)
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noPropertyAccessFromIndexSignature": false
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
