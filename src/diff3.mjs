@@ -22,7 +22,10 @@ export {
 //
 // Expects two arrays, finds longest common sequence
 function LCS(buffer1, buffer2) {
-  let equivalenceClasses = {};
+  // Use a prototype-less object so input elements that happen to match
+  // `Object.prototype` members (`constructor`, `__proto__`, `toString`, ...)
+  // don't shadow the lookup with inherited values.
+  let equivalenceClasses = Object.create(null);
   for (let j = 0; j < buffer2.length; j++) {
     const item = buffer2[j];
     if (equivalenceClasses[item]) {

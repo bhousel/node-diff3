@@ -31,4 +31,26 @@ describe('LCS', () => {
     assert.deepEqual(result.chain.chain.chain.chain.chain.chain, NULLRESULT);
   });
 
+  it('handles elements that match Object.prototype member names', () => {
+    // Regression: a plain `{}` lookup table treats elements like 'constructor'
+    // or '__proto__' as already-present (inherited from Object.prototype),
+    // which used to crash with "equivalenceClasses[item].push is not a function".
+    const prototypeNames = [
+      'constructor',
+      '__proto__',
+      'toString',
+      'hasOwnProperty',
+      'valueOf',
+      'isPrototypeOf',
+      'propertyIsEnumerable',
+      '__defineGetter__',
+    ];
+
+    for (const name of prototypeNames) {
+      const result = Diff3.LCS([name], [name]);
+      assert.deepEqual(result.buffer1index, 0);
+      assert.deepEqual(result.buffer2index, 0);
+    }
+  });
+
 });
