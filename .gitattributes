@@ -5,13 +5,14 @@
 *.cjs eol=lf
 *.ts eol=lf
 
+*.css linguist-detectable
 *.json linguist-detectable
+*.jsonc linguist-detectable
+*.json5 linguist-detectable
 *.md linguist-documentation
+*.svg linguist-detectable
+*.yaml linguist-detectable
 *.yml linguist-detectable
 
+docs/** linguist-documentation
 dist/** linguist-generated
-
-# sync:
-# version=1
-# source=https://github.com/rapideditor/agent-practices/blob/main/templates/.gitattributes
-# instructions="adapt file-type entries to this project's actual file types; add missing entries but do not replace local edits"

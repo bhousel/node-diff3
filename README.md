@@ -1,5 +1,6 @@
 [![build](https://github.com/bhousel/node-diff3/workflows/build/badge.svg)](https://github.com/bhousel/node-diff3/actions?query=workflow%3A%22build%22)
 [![npm version](https://badge.fury.io/js/node-diff3.svg)](https://badge.fury.io/js/node-diff3)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 
 # node-diff3
 
@@ -319,9 +320,3 @@ See examples: https://github.com/bhousel/node-diff3/blob/main/test/LCS.test.js
 
 This project is available under the [MIT License](https://opensource.org/licenses/MIT).
 See the [LICENSE.md](LICENSE.md) file for more details.
-
-<!-- sync:
-version=1
-source=https://github.com/rapideditor/agent-practices/blob/main/templates/README.md
-instructions="preserve this project's actual description, icon list, and any unique content; adopt structural sections (badge layout, contributing footer, license block) from the source if they are absent locally; do not overwrite meaningful local content with source content"
--->
