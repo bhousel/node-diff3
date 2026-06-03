@@ -13,10 +13,15 @@ export interface ILCSResult {
  */
 export function LCS<T>(buffer1: T[], buffer2: T[]): ILCSResult;
 
-export interface ICommResult<T> {
+export type ICommResult<T> = {
+  common: T[];
+  buffer1?: never;
+  buffer2?: never;
+} | {
+  common?: never;
   buffer1: T[];
   buffer2: T[];
-}
+};
 
 /**
  * We apply the LCS to build a 'comm'-style picture of the
@@ -124,14 +129,22 @@ export interface MergeRegion<T> {
   };
 }
 
-export interface MergeResult {
+export interface MergeResult<T = string> {
   conflict: boolean;
-  result: string[];
+  result: Array<T | string>;
 }
 
 export interface IMergeOptions {
   excludeFalseConflicts?: boolean;
   stringSeparator?: string | RegExp;
+}
+
+export interface IMergeLabelOptions extends IMergeOptions {
+  label?: {
+    a?: string;
+    o?: string;
+    b?: string;
+  };
 }
 
 /**
@@ -146,36 +159,30 @@ export interface IMergeOptions {
  * @param {{excludeFalseConflicts: boolean; stringSeparator: RegExp}} options
  * @returns {MergeRegion<T>[]}
  */
-export function diff3Merge<T>(
+export function diff3Merge<T = string>(
   a: string | T[],
   o: string | T[],
   b: string | T[],
   options?: IMergeOptions
 ): MergeRegion<T>[];
 
-export function merge<T>(
+export function merge<T = string>(
   a: string | T[],
   o: string | T[],
   b: string | T[],
-  options?: IMergeOptions
-): MergeResult;
+  options?: IMergeLabelOptions
+): MergeResult<T>;
 
-export function mergeDiff3<T>(
+export function mergeDiff3<T = string>(
   a: string | T[],
   o: string | T[],
   b: string | T[],
-  options?: IMergeOptions & {
-    label?: {
-      a?: string;
-      o?: string;
-      b?: string;
-    }
-  }
-): MergeResult;
+  options?: IMergeLabelOptions
+): MergeResult<T>;
 
-export function mergeDigIn<T>(
+export function mergeDigIn<T = string>(
   a: string | T[],
   o: string | T[],
   b: string | T[],
-  options?: IMergeOptions
-): MergeResult;
+  options?: IMergeLabelOptions
+): MergeResult<T>;
