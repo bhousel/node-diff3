@@ -15,6 +15,17 @@ _Breaking changes, which may affect downstream projects, are marked with a_ тЪая
 [#xxx]: https://github.com/bhousel/node-diff3/issues/xxx
 -->
 
+## 3.2.1
+##### 2026-Jun-03
+
+* Fix `LCS` lookup handling so keys like `constructor` or `__proto__` do not shadow dictionary lookups ([#87])
+* Improve TypeScript declarations for `diffComm` and merge APIs to better match runtime output ([#88])
+* Internal maintenance updates and dependency refreshes
+
+[#87]: https://github.com/bhousel/node-diff3/issues/87
+[#88]: https://github.com/bhousel/node-diff3/issues/88
+
+
 ## 3.2.0
 ##### 2025-Oct-21
 * This project uses [`bun`](https://bun.com/) now, for simpler developer tooling ([#85])
