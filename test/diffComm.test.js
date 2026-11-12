@@ -39,4 +39,49 @@ describe('diffComm', () => {
     assert.deepEqual(result[6].buffer2, undefined);
   });
 
+  it('handles empty lines', () => {
+    // From #50
+    const a = ['AA', '', 'b', 'c', 'ZZ', '', 'z', '', '', '90', '', 'x'];
+    const b = ['AA', '', 'd', 'c', 'ZZ', '', '', 'z', '', '99', '', 'x'];
+    const result = Diff3.diffComm(a, b);
+
+    assert.deepEqual(result[0].common, ['AA', '']);
+    assert.deepEqual(result[0].buffer1, undefined);
+    assert.deepEqual(result[0].buffer2, undefined);
+
+    assert.deepEqual(result[1].common, undefined);
+    assert.deepEqual(result[1].buffer1, ['b']);
+    assert.deepEqual(result[1].buffer2, ['d']);
+
+    assert.deepEqual(result[2].common, ['c', 'ZZ', '']);
+    assert.deepEqual(result[2].buffer1, undefined);
+    assert.deepEqual(result[2].buffer2, undefined);
+
+    assert.deepEqual(result[3].common, undefined);
+    assert.deepEqual(result[3].buffer1, []);
+    assert.deepEqual(result[3].buffer2, ['']);
+
+    assert.deepEqual(result[4].common, ['z', '']);
+    assert.deepEqual(result[4].buffer1, undefined);
+    assert.deepEqual(result[4].buffer2, undefined);
+
+    assert.deepEqual(result[5].common, undefined);
+    assert.deepEqual(result[5].buffer1, []);
+    assert.deepEqual(result[5].buffer2, ['99']);
+
+    assert.deepEqual(result[6].common, ['']);
+    assert.deepEqual(result[6].buffer1, undefined);
+    assert.deepEqual(result[6].buffer2, undefined);
+
+    assert.deepEqual(result[7].common, undefined);
+    assert.deepEqual(result[7].buffer1, ['90', '']);
+    assert.deepEqual(result[7].buffer2, []);
+
+    assert.deepEqual(result[8].common, ['x']);
+    assert.deepEqual(result[8].buffer1, undefined);
+    assert.deepEqual(result[8].buffer2, undefined);
+
+    assert.deepEqual(result.length, 9);
+  });
+
 });
