@@ -1,18 +1,21 @@
 import { describe, it } from 'bun:test';
-import { strict as assert } from 'bun:assert';
-import * as Diff3 from '../src/diff3.mjs';
+import { strict as assert } from 'node:assert';
+import * as Diff3 from '../src/diff3.ts';
 
 
 // Walks the LCS chain into [buffer1index, buffer2index] pairs, in order,
-// checking that each pair matches and that both indexes increase.
-function lcsPairs(a, b, result) {
-  const pairs = [];
-  for (let c = result; c.chain !== null; c = c.chain) {
+// checking that each pair matches, that both indexes increase, and that
+// the chain ends at NULLRESULT.
+function lcsPairs<T>(a: readonly T[], b: readonly T[], result: Diff3.ILCSResult): Array<[number, number]> {
+  const pairs: Array<[number, number]> = [];
+  let c = result;
+  for (; c.chain !== null; c = c.chain) {
     pairs.push([c.buffer1index, c.buffer2index]);
   }
+  assert.deepEqual(c, { buffer1index: -1, buffer2index: -1, chain: null });
   pairs.reverse();
 
-  let prev = [-1, -1];
+  let prev = [-1, -1] as [number, number];
   for (const [i, j] of pairs) {
     assert.ok(i > prev[0] && j > prev[1]);
     assert.deepEqual(a[i], b[j]);
@@ -22,16 +25,16 @@ function lcsPairs(a, b, result) {
 }
 
 // Brute-force LCS length by dynamic programming, to check against.
-function lcsLength(a, b) {
-  let prev = new Array(b.length + 1).fill(0);
+function lcsLength<T>(a: readonly T[], b: readonly T[]): number {
+  let prev: number[] = new Array(b.length + 1).fill(0);
   for (const item of a) {
     const row = [0];
     for (let j = 0; j < b.length; j++) {
-      row.push(item === b[j] ? prev[j] + 1 : Math.max(prev[j + 1], row[j]));
+      row.push(item === b[j] ? prev[j]! + 1 : Math.max(prev[j + 1]!, row[j]!));
     }
     prev = row;
   }
-  return prev[b.length];
+  return prev[b.length]!;
 }
 
 
@@ -41,26 +44,15 @@ describe('LCS', () => {
     const a = ['AA', 'a', 'b', 'c', 'ZZ', 'new', '00', 'a', 'a', 'M', '99'];
     const b = ['AA', 'a', 'd', 'c', 'ZZ', '11', 'M', 'z', 'z', '99'];
     const result = Diff3.LCS(a, b);
-    const NULLRESULT = { buffer1index: -1, buffer2index: -1, chain: null };
 
-    assert.deepEqual(result.buffer1index, 10);  // '99'
-    assert.deepEqual(result.buffer2index, 9);
-
-    assert.deepEqual(result.chain.buffer1index, 9);  // 'M'
-    assert.deepEqual(result.chain.buffer2index, 6);
-
-    assert.deepEqual(result.chain.chain.buffer1index, 4);  // 'ZZ'
-    assert.deepEqual(result.chain.chain.buffer2index, 4);
-
-    assert.deepEqual(result.chain.chain.chain.buffer1index, 3);  // 'c'
-    assert.deepEqual(result.chain.chain.chain.buffer2index, 3);
-
-    assert.deepEqual(result.chain.chain.chain.chain.buffer1index, 1);  // 'a'
-    assert.deepEqual(result.chain.chain.chain.chain.buffer2index, 1);
-
-    assert.deepEqual(result.chain.chain.chain.chain.chain.buffer1index, 0);  // 'AA'
-    assert.deepEqual(result.chain.chain.chain.chain.chain.buffer2index, 0);
-    assert.deepEqual(result.chain.chain.chain.chain.chain.chain, NULLRESULT);
+    assert.deepEqual(lcsPairs(a, b, result), [
+      [0, 0],   // 'AA'
+      [1, 1],   // 'a'
+      [3, 3],   // 'c'
+      [4, 4],   // 'ZZ'
+      [9, 6],   // 'M'
+      [10, 9]   // '99'
+    ]);
   });
 
   it('handles elements that match Object.prototype member names', () => {
@@ -89,13 +81,13 @@ describe('LCS', () => {
     // Regression: elements used to be matched by their string form, so all
     // objects matched each other, and `1` matched `'1'`.
     const x = { x: 1 };
-    assert.deepEqual(Diff3.LCS([{ a: 1 }], [{ b: 2 }]).chain, null);
+    assert.deepEqual(Diff3.LCS<object>([{ a: 1 }], [{ b: 2 }]).chain, null);
     assert.deepEqual(Diff3.LCS([{ a: 1 }], [{ a: 1 }]).chain, null);
-    assert.deepEqual(Diff3.LCS([1], ['1']).chain, null);
-    assert.deepEqual(Diff3.LCS([null], ['null']).chain, null);
+    assert.deepEqual(Diff3.LCS<unknown>([1], ['1']).chain, null);
+    assert.deepEqual(Diff3.LCS<unknown>([null], ['null']).chain, null);
 
-    const result = Diff3.LCS([x, 1, 'a'], [x, '1', 'a']);
-    assert.deepEqual(lcsPairs([x, 1, 'a'], [x, '1', 'a'], result), [[0, 0], [2, 2]]);
+    const result = Diff3.LCS<unknown>([x, 1, 'a'], [x, '1', 'a']);
+    assert.deepEqual(lcsPairs<unknown>([x, 1, 'a'], [x, '1', 'a'], result), [[0, 0], [2, 2]]);
   });
 
   it('finds a longest common subsequence when inputs have many repeated lines', () => {
@@ -106,7 +98,7 @@ describe('LCS', () => {
     const values = ['', '', '', 'a', 'b'];
     const randomBuffer = () => Array.from(
       { length: Math.floor(random() * 20) },
-      () => values[Math.floor(random() * values.length)]
+      () => values[Math.floor(random() * values.length)]!
     );
 
     for (let t = 0; t < 1000; t++) {

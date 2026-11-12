@@ -2,7 +2,7 @@
 await Promise.all([
    Bun.build({
     entrypoints: ['./src/index.ts'],
-    outdir: './dist',
+    outdir: './dist/js',
     target: 'browser',
     format: 'iife',
     sourcemap: 'linked',
@@ -10,17 +10,8 @@ await Promise.all([
   }),
 
   Bun.build({
-    entrypoints: ['./src/diff3.mjs'],
-    outdir: './dist',
-    target: 'node',
-    format: 'cjs',
-    sourcemap: 'linked',
-    naming: 'diff3.c[ext]'  // .cjs
-  }),
-
-  Bun.build({
-    entrypoints: ['./src/diff3.mjs'],
-    outdir: './dist',
+    entrypoints: ['./src/diff3.ts'],
+    outdir: './dist/js',
     target: 'node',
     format: 'esm',
     sourcemap: 'linked',

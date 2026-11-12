@@ -36,7 +36,7 @@ Skip categories where things look fine. Don't invent problems.
 
 **Linting** — `.oxlintrc.json` rules that are stale, redundant, or missing for the code in `scripts/`, `src/`, and `test/`
 
-**Packaging** — `package.json` `exports` conditions, `files`, and `types` that don't match what the build in `dist/` actually produces (ESM, CJS, IIFE, declarations)
+**Packaging** — `package.json` `exports` conditions, `files`, and `types` that don't match what the build in `dist/` actually produces (ESM, IIFE, declarations)
 
 **Developer Experience** — missing or misleading `package.json` scripts, incomplete `.gitignore`/`.gitattributes`, missing docs or source comments
 
