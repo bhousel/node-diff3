@@ -1,6 +1,6 @@
 import { describe, it } from 'bun:test';
-import { strict as assert } from 'bun:assert';
-import * as Diff3 from '../src/diff3.mjs';
+import { strict as assert } from 'node:assert';
+import * as Diff3 from '../src/diff3.ts';
 
 
 describe('mergeDigIn', () => {

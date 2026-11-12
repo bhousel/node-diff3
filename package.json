@@ -25,20 +25,22 @@
   ],
   "type": "module",
   "exports": {
-    "bun": "./src/diff3.mjs",
-    "types": "./src/diff3.d.ts",
-    "import": "./dist/diff3.mjs",
-    "require": "./dist/diff3.cjs",
-    "browser": "./dist/diff3.iife.js"
+    "types": "./dist/ts/diff3.d.ts",
+    "bun": "./src/diff3.ts",
+    "import": "./dist/js/diff3.mjs",
+    "require": "./dist/js/diff3.mjs",
+    "browser": "./dist/js/diff3.iife.js",
+    "default": "./dist/js/diff3.mjs"
   },
   "scripts": {
     "all": "bun run --sequential clean check build test",
     "clean": "bun ./scripts/clean.ts",
     "build": "bun run --parallel 'build:*'",
     "build:js": "bun ./scripts/build_js.ts",
-    "build:ts": "tsc",
+    "build:ts": "tsc -p tsconfig.build.json",
     "check": "bun run --parallel 'check:*'",
     "check:lint": "oxlint ./scripts ./src ./test",
+    "check:types": "tsc --noEmit",
     "test": "bun test --dots --coverage ./test"
   },
   "devDependencies": {

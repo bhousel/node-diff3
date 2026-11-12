@@ -22,16 +22,14 @@ To install node-diff3 as a dependency in your project:
 $  npm install --save node-diff3
 ```
 
-**node-diff3** is distributed in CJS and ESM module formats for maxmimum compatibility. ([Read more about Javascript module formats](https://dev.to/iggredible/what-the-heck-are-cjs-amd-umd-and-esm-ikm))
-
+**node-diff3** is written in TypeScript and distributed as an ESM module, with type declarations included. ([Read more about Javascript module formats](https://dev.to/iggredible/what-the-heck-are-cjs-amd-umd-and-esm-ikm))
 
 ```js
-const Diff3 = require('node-diff3');                   // CommonJS import all
-const diff3Merge = require('node-diff3').diff3Merge;   // CommonJS import named
-// or
 import * as Diff3 from 'node-diff3';                   // ESM import all
 import { diff3Merge } from 'node-diff3';               // ESM import named
 ```
+
+CommonJS code can still `require('node-diff3')` on Node 20.19+ or 22.12+, which can load ESM modules with `require()`.
 
 ### Use in Browsers
 
@@ -40,7 +38,7 @@ You can also use **node-diff3** directly in a web browser.  A good way to do thi
 When you load this file in a `<script>` tag, you'll get a `Diff3` global to use elsewhere in your scripts:
 ```html
 <head>
-<script src="https://cdn.jsdelivr.net/npm/node-diff3@latest/dist/diff3.iife.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/node-diff3@latest/dist/js/diff3.iife.min.js"></script>
 </head>
 …
 <script>
@@ -93,7 +91,7 @@ Performs a 3-way diff on buffers `o` (original), and `a` and `b` (changed).
 The buffers may be arrays or strings. If strings, they will be split into arrays on whitespace `/\s+/` by default.
 The returned result alternates between "ok" and "conflict" blocks.
 
-See examples: https://github.com/bhousel/node-diff3/blob/main/test/diff3Merge.test.js
+See examples: https://github.com/bhousel/node-diff3/blob/main/test/diff3Merge.test.ts
 
 ```js
 const o = ['AA', 'ZZ', '00', 'M', '99'];
@@ -119,7 +117,7 @@ Options may passed as an object:
 
 Passes arguments to [diff3Merge](#diff3Merge) to generate a diff3-style merge result.
 
-See examples: https://github.com/bhousel/node-diff3/blob/main/test/merge.test.js
+See examples: https://github.com/bhousel/node-diff3/blob/main/test/merge.test.ts
 
 ```js
 const r = Diff3.merge(a, o, b);
@@ -157,7 +155,7 @@ const result = r.result;
 
 Passes arguments to [diff3Merge](#diff3Merge) to generate a diff3-style merge result with original (similar to [git-diff3](https://git-scm.com/book/en/v2/Git-Tools-Advanced-Merging)).
 
-See examples: https://github.com/bhousel/node-diff3/blob/main/test/mergeDiff3.test.js
+See examples: https://github.com/bhousel/node-diff3/blob/main/test/mergeDiff3.test.ts
 
 ```js
 const r = Diff3.mergeDiff3(a, o, b, { label: { a: 'a', o: 'o', b: 'b' } });
@@ -210,7 +208,7 @@ Extra options:
 
 Passes arguments to [diff3Merge](#diff3Merge) to generate a digin-style merge result.
 
-See examples: https://github.com/bhousel/node-diff3/blob/main/test/mergeDigIn.test.js
+See examples: https://github.com/bhousel/node-diff3/blob/main/test/mergeDigIn.test.ts
 
 &nbsp;
 
@@ -218,7 +216,7 @@ See examples: https://github.com/bhousel/node-diff3/blob/main/test/mergeDigIn.te
 
 Low-level function used by [diff3Merge](#diff3Merge) to determine the stable and unstable regions between `a`, `o`, `b`.
 
-See examples: https://github.com/bhousel/node-diff3/blob/main/test/diff3MergeRegions.test.js
+See examples: https://github.com/bhousel/node-diff3/blob/main/test/diff3MergeRegions.test.ts
 
 
 &nbsp;
@@ -232,7 +230,7 @@ See examples: https://github.com/bhousel/node-diff3/blob/main/test/diff3MergeReg
 Performs a diff between arrays `buffer1` and `buffer2`.
 The returned `patch` result contains the information about the differing regions and can be applied to `buffer1` to yield `buffer2`.
 
-See examples: https://github.com/bhousel/node-diff3/blob/main/test/diffPatch.test.js
+See examples: https://github.com/bhousel/node-diff3/blob/main/test/diffPatch.test.ts
 
 ```js
 const buffer1 = ['AA', 'a', 'b', 'c', 'ZZ', 'new', '00', 'a', 'a', 'M', '99'];
@@ -247,7 +245,7 @@ const patch = Diff3.diffPatch(buffer1, buffer2);
 
 Applies a patch to a buffer, returning a new buffer without modifying the original.
 
-See examples: https://github.com/bhousel/node-diff3/blob/main/test/diffPatch.test.js
+See examples: https://github.com/bhousel/node-diff3/blob/main/test/diffPatch.test.ts
 
 ```js
 const result = Diff3.patch(buffer1, patch);
@@ -261,7 +259,7 @@ const result = Diff3.patch(buffer1, patch);
 Strips some extra information from the patch, returning a new patch without modifying the original.
 The "stripped" patch can still patch `buffer1` -> `buffer2`, but can no longer be inverted.
 
-See examples: https://github.com/bhousel/node-diff3/blob/main/test/diffPatch.test.js
+See examples: https://github.com/bhousel/node-diff3/blob/main/test/diffPatch.test.ts
 
 ```js
 const stripped = Diff3.stripPatch(patch);
@@ -274,7 +272,7 @@ const stripped = Diff3.stripPatch(patch);
 
 Inverts the patch (for example to turn `buffer2` back into `buffer1`), returning a new patch without modifying the original.
 
-See examples: https://github.com/bhousel/node-diff3/blob/main/test/diffPatch.test.js
+See examples: https://github.com/bhousel/node-diff3/blob/main/test/diffPatch.test.ts
 
 ```js
 const inverted = Diff3.invertPatch(patch);
@@ -287,7 +285,7 @@ const inverted = Diff3.invertPatch(patch);
 
 Returns a comm-style result of the differences between `buffer1` and `buffer2`.
 
-See examples: https://github.com/bhousel/node-diff3/blob/main/test/diffComm.test.js
+See examples: https://github.com/bhousel/node-diff3/blob/main/test/diffComm.test.ts
 
 &nbsp;
 
@@ -295,7 +293,7 @@ See examples: https://github.com/bhousel/node-diff3/blob/main/test/diffComm.test
 
 Low-level function used by [diff3MergeRegions](#diff3MergeRegions) to determine differing regions between `buffer1` and `buffer2`.
 
-See examples: https://github.com/bhousel/node-diff3/blob/main/test/diffIndices.test.js
+See examples: https://github.com/bhousel/node-diff3/blob/main/test/diffIndices.test.ts
 
 
 &nbsp;
@@ -313,7 +311,7 @@ See also:
 * http://www.cs.dartmouth.edu/~doug/
 * https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 
-See examples: https://github.com/bhousel/node-diff3/blob/main/test/LCS.test.js
+See examples: https://github.com/bhousel/node-diff3/blob/main/test/LCS.test.ts
 
 
 &nbsp;

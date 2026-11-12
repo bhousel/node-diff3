@@ -1,6 +1,6 @@
 import { describe, it } from 'bun:test';
-import { strict as assert } from 'bun:assert';
-import * as Diff3 from '../src/diff3.mjs';
+import { strict as assert } from 'node:assert';
+import * as Diff3 from '../src/diff3.ts';
 
 
 describe('diff3Merge', () => {
@@ -40,24 +40,13 @@ describe('diff3Merge', () => {
     99
     */
 
-    assert.deepEqual(result[0].ok, ['AA']);
-    assert.deepEqual(result[0].conflict, undefined);
-
-    assert.deepEqual(result[1].ok, undefined);
-    assert.deepEqual(result[1].conflict.o, []);
-    assert.deepEqual(result[1].conflict.a, ['a', 'b', 'c']);
-    assert.deepEqual(result[1].conflict.b, ['a', 'd', 'c']);
-
-    assert.deepEqual(result[2].ok, ['ZZ']);
-    assert.deepEqual(result[2].conflict, undefined);
-
-    assert.deepEqual(result[3].ok, undefined);
-    assert.deepEqual(result[3].conflict.o, ['00']);
-    assert.deepEqual(result[3].conflict.a, ['new', '00', 'a', 'a']);
-    assert.deepEqual(result[3].conflict.b, ['11']);
-
-    assert.deepEqual(result[4].ok, ['M', 'z', 'z', '99']);
-    assert.deepEqual(result[4].conflict, undefined);
+    assert.deepEqual(result, [
+      { ok: ['AA'] },
+      { conflict: { a: ['a', 'b', 'c'], aIndex: 1, o: [], oIndex: 1, b: ['a', 'd', 'c'], bIndex: 1 } },
+      { ok: ['ZZ'] },
+      { conflict: { a: ['new', '00', 'a', 'a'], aIndex: 5, o: ['00'], oIndex: 2, b: ['11'], bIndex: 5 } },
+      { ok: ['M', 'z', 'z', '99'] }
+    ]);
   });
 
 
@@ -67,16 +56,11 @@ describe('diff3Merge', () => {
     const b = 'was into touring';
     const result = Diff3.diff3Merge(a, o, b);
 
-    assert.deepEqual(result[0].ok, ['was']);
-    assert.deepEqual(result[0].conflict, undefined);
-
-    assert.deepEqual(result[1].ok, undefined);
-    assert.deepEqual(result[1].conflict.o, []);
-    assert.deepEqual(result[1].conflict.a, ['here']);
-    assert.deepEqual(result[1].conflict.b, ['into']);
-
-    assert.deepEqual(result[2].ok, ['touring']);
-    assert.deepEqual(result[2].conflict, undefined);
+    assert.deepEqual(result, [
+      { ok: ['was'] },
+      { conflict: { a: ['here'], aIndex: 1, o: [], oIndex: 1, b: ['into'], bIndex: 1 } },
+      { ok: ['touring'] }
+    ]);
   });
 
   it('strings can optionally split on given separator', () => {
@@ -85,16 +69,11 @@ describe('diff3Merge', () => {
     const b = 'new hampshire, new york, north carolina';
     const result = Diff3.diff3Merge(a, o, b, { stringSeparator: /,\s+/ });
 
-    assert.deepEqual(result[0].ok, ['new hampshire']);
-    assert.deepEqual(result[0].conflict, undefined);
-
-    assert.deepEqual(result[1].ok, undefined);
-    assert.deepEqual(result[1].conflict.o, ['new mexico']);
-    assert.deepEqual(result[1].conflict.a, ['new jersey']);
-    assert.deepEqual(result[1].conflict.b, ['new york']);
-
-    assert.deepEqual(result[2].ok, ['north carolina']);
-    assert.deepEqual(result[2].conflict, undefined);
+    assert.deepEqual(result, [
+      { ok: ['new hampshire'] },
+      { conflict: { a: ['new jersey'], aIndex: 1, o: ['new mexico'], oIndex: 1, b: ['new york'], bIndex: 1 } },
+      { ok: ['north carolina'] }
+    ]);
   });
 
 
@@ -104,8 +83,9 @@ describe('diff3Merge', () => {
     const b = 'AA a b c ZZ';
     const result = Diff3.diff3Merge(a, o, b);
 
-    assert.deepEqual(result[0].ok, ['AA', 'a', 'b', 'c', 'ZZ']);
-    assert.deepEqual(result[0].conflict, undefined);
+    assert.deepEqual(result, [
+      { ok: ['AA', 'a', 'b', 'c', 'ZZ'] }
+    ]);
   });
 
 
@@ -115,16 +95,11 @@ describe('diff3Merge', () => {
     const b = 'AA a b c ZZ';
     const result = Diff3.diff3Merge(a, o, b, { excludeFalseConflicts: false });
 
-    assert.deepEqual(result[0].ok, ['AA']);
-    assert.deepEqual(result[0].conflict, undefined);
-
-    assert.deepEqual(result[1].ok, undefined);
-    assert.deepEqual(result[1].conflict.o, []);
-    assert.deepEqual(result[1].conflict.a, ['a', 'b', 'c']);
-    assert.deepEqual(result[1].conflict.b, ['a', 'b', 'c']);
-
-    assert.deepEqual(result[2].ok, ['ZZ']);
-    assert.deepEqual(result[2].conflict, undefined);
+    assert.deepEqual(result, [
+      { ok: ['AA'] },
+      { conflict: { a: ['a', 'b', 'c'], aIndex: 1, o: [], oIndex: 1, b: ['a', 'b', 'c'], bIndex: 1 } },
+      { ok: ['ZZ'] }
+    ]);
   });
 
 
@@ -135,7 +110,9 @@ describe('diff3Merge', () => {
     const expected = ['n4100522632', 'n4100697091', 'n4100697136', 'n-10000', 'n4102671583', 'n4102671584', 'n4102671585', 'n4102671586', 'n4102671587', 'n4102671588', 'n4102677889', 'n4105613618', 'n4102677890', 'n4105613617', 'n4094374176'];
     const result = Diff3.diff3Merge(a, o, b);
 
-    assert.deepEqual(result[0].ok, expected);
+    assert.deepEqual(result, [
+      { ok: expected }
+    ]);
   });
 
 
@@ -148,10 +125,15 @@ description: "description changed"`;
 description: "description"`;
     const result = Diff3.diff3Merge(a, o, b, { stringSeparator: /[\r\n]+/ });
 
-    assert.deepEqual(result[0].ok, undefined);
-    assert.deepEqual(result[0].conflict.o, ['title: "title"', 'description: "description"']);
-    assert.deepEqual(result[0].conflict.a, ['title: "title"', 'description: "description changed"']);
-    assert.deepEqual(result[0].conflict.b, ['title: "title changed"', 'description: "description"']);
+    assert.deepEqual(result, [
+      {
+        conflict: {
+          a: ['title: "title"', 'description: "description changed"'], aIndex: 0,
+          o: ['title: "title"', 'description: "description"'], oIndex: 0,
+          b: ['title: "title changed"', 'description: "description"'], bIndex: 0
+        }
+      }
+    ]);
   });
 
 
@@ -160,13 +142,14 @@ description: "description"`;
     const x = { x: 1 };
     const y = { y: 2 };
     const z = { z: 3 };
-    const result = Diff3.diff3Merge([x, y], [x], [z]);
+    const result = Diff3.diff3Merge<object>([x, y], [x], [z]);
 
     assert.deepEqual(result.length, 1);
-    assert.equal(result[0].conflict.a[0], x);
-    assert.equal(result[0].conflict.a[1], y);
-    assert.equal(result[0].conflict.o[0], x);
-    assert.equal(result[0].conflict.b[0], z);
+    const conflict = result[0]?.conflict;
+    assert.equal(conflict?.a[0], x);
+    assert.equal(conflict?.a[1], y);
+    assert.equal(conflict?.o[0], x);
+    assert.equal(conflict?.b[0], z);
   });
 
 
@@ -178,7 +161,8 @@ description: "description"`;
     b[999000] = 'changed';
     const result = Diff3.diff3Merge(a, o, b);
 
-    assert.deepEqual(result.length, 1);
-    assert.deepEqual(result[0].ok, b);
+    assert.deepEqual(result, [
+      { ok: b }
+    ]);
   });
 });
