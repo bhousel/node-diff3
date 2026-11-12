@@ -34,7 +34,7 @@ Skip categories where things look fine. Don't invent problems.
 
 **Runtime / tooling** (Bun-specific entries apply if used) — `node:*` APIs where Bun-native equivalents exist, `npm`/`yarn` artifacts in scripts, dependencies Bun now handles natively
 
-**Linting** — `eslint.config.js` rules that are stale, redundant, or missing for the code in `scripts/`, `src/`, and `test/`
+**Linting** — `.oxlintrc.json` rules that are stale, redundant, or missing for the code in `scripts/`, `src/`, and `test/`
 
 **Packaging** — `package.json` `exports` conditions, `files`, and `types` that don't match what the build in `dist/` actually produces (ESM, CJS, IIFE, declarations)
 
