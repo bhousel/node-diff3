@@ -22,35 +22,143 @@ export {
 //
 // Expects two arrays, finds longest common sequence
 function LCS(buffer1, buffer2) {
+  // A common prefix always ends up in the LCS, matched item for item,
+  // so chain it up front and only run the algorithm on what follows.
+  // `candidates[0]` (below) is then the end of the prefix instead of NULLRESULT.
+  let prefixEnd = { buffer1index: -1, buffer2index: -1, chain: null };  // NULLRESULT
+  const maxPrefix = Math.min(buffer1.length, buffer2.length);
+  for (let p = 0; p < maxPrefix && buffer1[p] === buffer2[p]; p++) {
+    prefixEnd = { buffer1index: p, buffer2index: p, chain: prefixEnd };
+  }
+  const prefixLength = prefixEnd.buffer1index + 1;
+
+  // Most (j)s in a row can't extend any candidate: either `j` is at or before
+  // `candidates[r].buffer2index`, or some candidate already ends at `j`.
+  // With many repeated items (blank lines, braces, common words) that's nearly
+  // all of them, so rather than visit every `j`, we jump to the next one that can.
+  //
+  // `taken[j]` is set when a candidate ends at `j`. Small equivalence classes
+  // just scan it. Each large class also gets a contiguous range of "slots", one
+  // per `j`, in ascending order; `free` is a segment tree over the slots that
+  // counts the (j)s no candidate ends at, so the next one is found in O(log n).
+  // (Most items in real input are unique or nearly so, and keeping the tree
+  // updated for them would cost more than it saves.)
+  const SMALL_CLASS = 16;
+
   // Use a prototype-less object so input elements that happen to match
   // `Object.prototype` members (`constructor`, `__proto__`, `toString`, ...)
   // don't shadow the lookup with inherited values.
   let equivalenceClasses = Object.create(null);
-  for (let j = 0; j < buffer2.length; j++) {
+  let largeClasses = [];
+  for (let j = prefixLength; j < buffer2.length; j++) {
     const item = buffer2[j];
     if (equivalenceClasses[item]) {
       equivalenceClasses[item].push(j);
+      if (equivalenceClasses[item].length === SMALL_CLASS + 1) {
+        largeClasses.push(equivalenceClasses[item]);
+      }
     } else {
       equivalenceClasses[item] = [j];
     }
   }
 
-  const NULLRESULT = { buffer1index: -1, buffer2index: -1, chain: null };
-  let candidates = [NULLRESULT];
+  const taken = new Uint8Array(buffer2.length);
+  const slotOf = new Int32Array(buffer2.length).fill(-1);
+  const slotStart = new Map();   // large class -> its first slot
+  let slotCount = 0;
+  for (const indices of largeClasses) {
+    slotStart.set(indices, slotCount);
+    for (let k = 0; k < indices.length; k++) {
+      slotOf[indices[k]] = slotCount + k;
+    }
+    slotCount += indices.length;
+  }
 
-  for (let i = 0; i < buffer1.length; i++) {
+  let size = 1;
+  while (size < slotCount) size <<= 1;
+  const free = new Int32Array(2 * size);
+  free.fill(1, size, size + slotCount);
+  for (let k = size - 1; k > 0; k--) {
+    free[k] = free[2 * k] + free[2 * k + 1];
+  }
+
+  // Returns the first free slot at or after `slot`, or -1 if there isn't one
+  function nextFreeSlot(slot) {
+    if (slot >= slotCount) return -1;
+    let k = slot + size;
+    while (free[k] === 0) {
+      while (k & 1) k >>= 1;    // climb out of right children
+      if (k === 0) return -1;   // climbed past the root
+      k++;                      // move to the subtree just to the right
+    }
+    while (k < size) {
+      k = free[2 * k] ? 2 * k : 2 * k + 1;
+    }
+    return k - size;
+  }
+
+  // Marks `buffer2[j]` as taken or free
+  function setTaken(j, isTaken) {
+    taken[j] = isTaken ? 1 : 0;
+    const slot = slotOf[j];
+    if (slot < 0) return;
+    const delta = isTaken ? -1 : 1;
+    for (let k = slot + size; k > 0; k >>= 1) {
+      free[k] += delta;
+    }
+  }
+
+  // Sets `candidates[r] = c`, keeping `taken` and `free` in step
+  function setCandidate(r, c) {
+    const old = candidates[r];
+    if (old === c) return;
+    if (old) setTaken(old.buffer2index, false);
+    setTaken(c.buffer2index, true);
+    candidates[r] = c;
+  }
+
+  let candidates = [prefixEnd];
+
+  for (let i = prefixLength; i < buffer1.length; i++) {
     const item = buffer1[i];
-    const buffer2indices = equivalenceClasses[item] || [];
+    const indices = equivalenceClasses[item];
+    if (!indices) continue;
+
+    const start = indices.length > SMALL_CLASS ? slotStart.get(indices) : -1;
     let r = 0;
     let c = candidates[0];
+    let k = 0;  // the next of `indices` to consider
 
-    for (const j of buffer2indices) {
-      // Find the candidate `s` (at or after `r`) that `j` extends: the one with
-      // `candidates[s].buffer2index < j`, where the next one, if any, is past `j`.
-      // The `buffer2index` values from `r` on are strictly increasing, so the
-      // boundary is found by binary search instead of a linear scan.
-      let lo = r;
-      let hi = candidates.length;
+    while (true) {
+      // Skip the (j)s at or before `candidates[r].buffer2index`..
+      const after = candidates[r].buffer2index;
+      let lo = k;
+      let hi = indices.length;
+      while (lo < hi) {
+        const mid = (lo + hi) >>> 1;
+        if (indices[mid] <= after) {
+          lo = mid + 1;
+        } else {
+          hi = mid;
+        }
+      }
+      // ..and the (j)s that a candidate already ends at.
+      if (start < 0) {
+        while (lo < indices.length && taken[indices[lo]]) lo++;
+        if (lo === indices.length) break;
+        k = lo;
+      } else {
+        const slot = nextFreeSlot(start + lo);
+        if (slot === -1 || slot >= start + indices.length) break;
+        k = slot - start;
+      }
+      const j = indices[k];
+
+      // `j` extends the last candidate `s` that ends before it. The
+      // `buffer2index` values from `r` on are strictly increasing, so the
+      // boundary is found by binary search.
+      lo = r + 1;
+      hi = candidates.length;
       while (lo < hi) {
         const mid = (lo + hi) >>> 1;
         if (candidates[mid].buffer2index < j) {
@@ -59,27 +167,19 @@ function LCS(buffer1, buffer2) {
           hi = mid;
         }
       }
-      let s = candidates.length;
-      if (lo > r && (lo === candidates.length || candidates[lo].buffer2index > j)) {
-        s = lo - 1;
-      }
+      const s = lo - 1;
 
-      if (s < candidates.length) {
-        const newCandidate = { buffer1index: i, buffer2index: j, chain: candidates[s] };
-        if (r === candidates.length) {
-          candidates.push(c);
-        } else {
-          candidates[r] = c;
-        }
-        r = s + 1;
-        c = newCandidate;
-        if (r === candidates.length) {
-          break; // no point in examining further (j)s
-        }
+      const newCandidate = { buffer1index: i, buffer2index: j, chain: candidates[s] };
+      setCandidate(r, c);
+      r = s + 1;
+      c = newCandidate;
+      if (r === candidates.length) {
+        break; // no point in examining further (j)s
       }
+      k++;
     }
 
-    candidates[r] = c;
+    setCandidate(r, c);
   }
 
   // At this point, we know the LCS: it's in the reverse of the
@@ -253,21 +353,23 @@ function diff3MergeRegions(a, o, b) {
     }
   }
 
-  while (hunks.length) {
-    let hunk = hunks.shift();
+  let hunkIndex = 0;
+  while (hunkIndex < hunks.length) {
+    let hunk = hunks[hunkIndex++];
     let regionStart = hunk.oStart;
     let regionEnd = hunk.oStart + hunk.oLength;
     let regionHunks = [hunk];
     advanceTo(regionStart);
 
     // Try to pull next overlapping hunk into this region
-    while (hunks.length) {
-      const nextHunk = hunks[0];
+    while (hunkIndex < hunks.length) {
+      const nextHunk = hunks[hunkIndex];
       const nextHunkStart = nextHunk.oStart;
       if (nextHunkStart > regionEnd) break;   // no overlap
 
       regionEnd = Math.max(regionEnd, nextHunkStart + nextHunk.oLength);
-      regionHunks.push(hunks.shift());
+      regionHunks.push(nextHunk);
+      hunkIndex++;
     }
 
     if (regionHunks.length === 1) {
@@ -292,13 +394,12 @@ function diff3MergeRegions(a, o, b) {
         a: [a.length, -1, o.length, -1],
         b: [b.length, -1, o.length, -1]
       };
-      while (regionHunks.length) {
-        hunk = regionHunks.shift();
-        const oStart = hunk.oStart;
-        const oEnd = oStart + hunk.oLength;
-        const abStart = hunk.abStart;
-        const abEnd = abStart + hunk.abLength;
-        let b = bounds[hunk.ab];
+      for (const regionHunk of regionHunks) {
+        const oStart = regionHunk.oStart;
+        const oEnd = oStart + regionHunk.oLength;
+        const abStart = regionHunk.abStart;
+        const abEnd = abStart + regionHunk.abLength;
+        let b = bounds[regionHunk.ab];
         b[0] = Math.min(abStart, b[0]);
         b[1] = Math.max(abEnd, b[1]);
         b[2] = Math.min(oStart, b[2]);
@@ -330,6 +431,16 @@ function diff3MergeRegions(a, o, b) {
   advanceTo(o.length);
 
   return results;
+}
+
+
+// Appends `items` to `target`. (`target.push(...items)` overflows the call
+// stack for large arrays, and `result = result.concat(items)` in a loop copies
+// the whole result every time.)
+function pushAll(target, items) {
+  for (const item of items) {
+    target.push(item);
+  }
 }
 
 
@@ -369,10 +480,10 @@ function diff3Merge(a, o, b, options) {
 
   regions.forEach(region =>  {
     if (region.stable) {
-      okBuffer.push(...region.bufferContent);
+      pushAll(okBuffer, region.bufferContent);
     } else {
       if (options.excludeFalseConflicts && isFalseConflict(region.aContent, region.bContent)) {
-        okBuffer.push(...region.aContent);
+        pushAll(okBuffer, region.aContent);
       } else {
         flushOk();
         results.push({
@@ -413,18 +524,16 @@ function mergeDiff3(a, o, b, options) {
 
   regions.forEach(region => {
     if (region.ok) {
-      result = result.concat(region.ok);
+      pushAll(result, region.ok);
     } else if (region.conflict) {
       conflict = true;
-      result = result.concat(
-        [aSection],
-        region.conflict.a,
-        [oSection],
-        region.conflict.o,
-        [xSection],
-        region.conflict.b,
-        [bSection]
-      );
+      result.push(aSection);
+      pushAll(result, region.conflict.a);
+      result.push(oSection);
+      pushAll(result, region.conflict.o);
+      result.push(xSection);
+      pushAll(result, region.conflict.b);
+      result.push(bSection);
     }
   });
 
@@ -453,16 +562,14 @@ function merge(a, o, b, options) {
 
   regions.forEach(region => {
     if (region.ok) {
-      result = result.concat(region.ok);
+      pushAll(result, region.ok);
     } else if (region.conflict) {
       conflict = true;
-      result = result.concat(
-        [aSection],
-        region.conflict.a,
-        [xSection],
-        region.conflict.b,
-        [bSection]
-      );
+      result.push(aSection);
+      pushAll(result, region.conflict.a);
+      result.push(xSection);
+      pushAll(result, region.conflict.b);
+      result.push(bSection);
     }
   });
 
@@ -491,21 +598,19 @@ function mergeDigIn(a, o, b, options) {
 
   regions.forEach(region => {
     if (region.ok) {
-      result = result.concat(region.ok);
+      pushAll(result, region.ok);
     } else {
       const c = diffComm(region.conflict.a, region.conflict.b);
       for (const inner of c) {
         if (inner.common) {
-          result = result.concat(inner.common);
+          pushAll(result, inner.common);
         } else {
           conflict = true;
-          result = result.concat(
-            [aSection],
-            inner.buffer1,
-            [xSection],
-            inner.buffer2,
-            [bSection]
-          );
+          result.push(aSection);
+          pushAll(result, inner.buffer1);
+          result.push(xSection);
+          pushAll(result, inner.buffer2);
+          result.push(bSection);
         }
       }
     }

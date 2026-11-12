@@ -75,4 +75,16 @@ description: "description"`;
     assert.deepEqual(r.result, expected);
   });
 
+  it('handles many conflicts quickly', () => {
+    // 10,000 conflicts: every 10th line is changed differently in `a` and `b`
+    const o = Array.from({ length: 100000 }, (_, i) => `line ${i}`);
+    const a = o.map((line, i) => (i % 10 === 0 ? `a ${i}` : line));
+    const b = o.map((line, i) => (i % 10 === 0 ? `b ${i}` : line));
+
+    const r = Diff3.merge(a, o, b);
+    assert.equal(r.conflict, true);
+    assert.deepEqual(r.result.length, 100000 + 10000 * 4);  // each conflict adds 3 markers and 1 line
+    assert.deepEqual(r.result.slice(0, 7), ['<<<<<<<', 'a 0', '=======', 'b 0', '>>>>>>>', 'line 1', 'line 2']);
+  }, 1000);  // took about 3 s when the result was built with `concat`
+
 });
