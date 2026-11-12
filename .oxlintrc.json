@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["eslint", "typescript"],
+  "plugins": ["typescript"],
   "categories": {
     "correctness": "error"
   },
@@ -60,7 +60,7 @@
     "no-unreachable-loop": "warn",
     "no-unused-expressions": "error",
     "no-unused-vars": ["warn", { "vars": "all", "args": "none", "caughtErrors": "none", "destructuredArrayIgnorePattern": "^_" }],
-    "no-use-before-define": ["off", "nofunc"],
+    "no-use-before-define": "off",
     "no-useless-backreference": "warn",
     "no-useless-call": "warn",
     "no-useless-computed-key": "warn",
@@ -74,9 +74,9 @@
     "radix": ["error", "always"],
     "require-await": "error",
 
-    "@typescript-eslint/array-type": "off",
-    "@typescript-eslint/no-explicit-any": "warn",
-    "@typescript-eslint/no-inferrable-types": ["warn", { "ignoreParameters": true }],
+    "typescript/array-type": "off",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-inferrable-types": ["warn", { "ignoreParameters": true }],
 
     // Rules from the ESLint and typescript-eslint recommended and stylistic sets
     // that aren't in oxlint's "correctness" category
@@ -88,22 +88,22 @@
     "no-regex-spaces": "error",
     "no-useless-assignment": "error",
     "preserve-caught-error": "error",
-    "@typescript-eslint/adjacent-overload-signatures": "error",
-    "@typescript-eslint/ban-ts-comment": "error",
-    "@typescript-eslint/ban-tslint-comment": "error",
-    "@typescript-eslint/class-literal-property-style": "error",
-    "@typescript-eslint/consistent-generic-constructors": "error",
-    "@typescript-eslint/consistent-indexed-object-style": "error",
-    "@typescript-eslint/consistent-type-assertions": "error",
-    "@typescript-eslint/consistent-type-definitions": "error",
-    "@typescript-eslint/no-confusing-non-null-assertion": "error",
-    "@typescript-eslint/no-empty-object-type": "error",
-    "@typescript-eslint/no-namespace": "error",
-    "@typescript-eslint/no-require-imports": "error",
-    "@typescript-eslint/no-unnecessary-type-constraint": "error",
-    "@typescript-eslint/no-unsafe-function-type": "error",
-    "@typescript-eslint/prefer-for-of": "error",
-    "@typescript-eslint/prefer-function-type": "error"
+    "typescript/adjacent-overload-signatures": "error",
+    "typescript/ban-ts-comment": "error",
+    "typescript/ban-tslint-comment": "error",
+    "typescript/class-literal-property-style": "error",
+    "typescript/consistent-generic-constructors": "error",
+    "typescript/consistent-indexed-object-style": "error",
+    "typescript/consistent-type-assertions": "error",
+    "typescript/consistent-type-definitions": "error",
+    "typescript/no-confusing-non-null-assertion": "error",
+    "typescript/no-empty-object-type": "error",
+    "typescript/no-namespace": "error",
+    "typescript/no-require-imports": "error",
+    "typescript/no-unnecessary-type-constraint": "error",
+    "typescript/no-unsafe-function-type": "error",
+    "typescript/prefer-for-of": "error",
+    "typescript/prefer-function-type": "error"
   },
   "overrides": [
     {

@@ -6,7 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/bhousel/node-diff3.git"
   },
-  "description": "A JavaScript module for text diffing and three-way-merge.",
+  "description": "A JavaScript/TypeScript library for text diffing and three-way-merge.",
   "contributors": [
     "Bryan Housel <bhousel@gmail.com> (https://github.com/bhousel)"
   ],
@@ -17,7 +17,8 @@
     "gnu",
     "javascript",
     "merge",
-    "patch"
+    "patch",
+    "typescript"
   ],
   "files": [
     "dist/",

@@ -4,7 +4,7 @@
 
 # node-diff3
 
-**node-diff3** is a Javascript library to find differences between two buffers, generate and apply patches, and perform 3-way merging between an original and two changed buffers. It contains similar functionality to the [GNU Diffutils](https://www.gnu.org/software/diffutils/manual/diffutils.html) tools.
+**node-diff3** is a JavaScript/TypeScript library to find differences between two buffers, generate and apply patches, and perform 3-way merging between an original and two changed buffers. It contains similar functionality to the [GNU Diffutils](https://www.gnu.org/software/diffutils/manual/diffutils.html) tools.
 
 The code originally came from project Synchrotron, created by Tony Garnock-Jones. For more detail please visit:
 
@@ -76,7 +76,7 @@ Buffers are arrays (or strings, which are split into arrays). Items are compared
   * [invertPatch](#invertPatch)
   * [diffComm](#diffComm)
   * [diffIndices](#diffIndices)
-* [Longest Common Sequence (LCS)](#longest-common-sequence-lcs)
+* [Longest Common Subsequence (LCS)](#longest-common-subsequence-lcs)
   * [LCS](#LCS)
 
 &nbsp;
@@ -100,7 +100,7 @@ const b = ['AA', 'a', 'd', 'c', 'ZZ', '11', 'M', 'z', 'z', '99'];
 const result = Diff3.diff3Merge(a, o, b);
 ```
 
-Options may passed as an object:
+Options may be passed as an object:
 ```js
 {
   excludeFalseConflicts: true,
@@ -109,7 +109,7 @@ Options may passed as an object:
 ```
 
 * `excludeFalseConflicts` - If both `a` and `b` contain an identical change from `o`, this is considered a "false" conflict.
-* `stringSeparator` - If inputs buffers are strings, this controls how to split the strings into arrays. The separator value may be a string or a regular expression, as it is just passed to [String.split()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split).
+* `stringSeparator` - If input buffers are strings, this controls how to split the strings into arrays. The separator value may be a string or a regular expression, as it is just passed to [String.split()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split).
 
 &nbsp;
 
@@ -249,7 +249,7 @@ See examples: https://github.com/bhousel/node-diff3/blob/main/test/diffPatch.tes
 
 ```js
 const result = Diff3.patch(buffer1, patch);
-// `result` contains a new arrray which is a copy of `buffer2`
+// `result` contains a new array which is a copy of `buffer2`
 ```
 
 &nbsp;
@@ -298,7 +298,7 @@ See examples: https://github.com/bhousel/node-diff3/blob/main/test/diffIndices.t
 
 &nbsp;
 
-### Longest Common Sequence (LCS)
+### Longest Common Subsequence (LCS)
 
 &nbsp;
 

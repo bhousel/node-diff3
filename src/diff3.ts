@@ -40,6 +40,7 @@ export interface IDiffIndicesResult<T> {
   buffer2Content: T[];
 }
 
+/** A run of `length` items starting at `offset` in a buffer, with the items themselves. */
 export interface IChunk<T> {
   offset: number;
   length: number;
@@ -58,6 +59,7 @@ export interface IStrippedPatchRes<T> {
   buffer2: Pick<IChunk<T>, 'chunk'>;
 }
 
+/** A region that merges cleanly: unchanged in `o`, or changed on only one side (`buffer`). */
 export interface IStableRegion<T> {
   stable: true;
   buffer: 'a' | 'o' | 'b';
@@ -66,6 +68,7 @@ export interface IStableRegion<T> {
   bufferContent: T[];
 }
 
+/** A region that both `a` and `b` changed, with its span in each of `a`, `o`, and `b`. */
 export interface IUnstableRegion<T> {
   stable: false;
   aStart: number;
@@ -79,6 +82,7 @@ export interface IUnstableRegion<T> {
   oContent: T[];
 }
 
+/** A region of a `diff3MergeRegions` result. */
 export type IRegion<T> = IStableRegion<T> | IUnstableRegion<T>;
 
 /** A block of a `diff3Merge` result: either merged cleanly (`ok`), or a conflict. */
@@ -97,17 +101,23 @@ export type MergeRegion<T> = {
   };
 };
 
+/** The merged buffer, with conflict marker lines, and whether there were any conflicts. */
 export interface MergeResult<T = string> {
   conflict: boolean;
   result: Array<T | string>;
 }
 
+/** Options for `diff3Merge`. */
 export interface IMergeOptions {
+  /** Treat identical changes in `a` and `b` as merged rather than a conflict (default `true`) */
   excludeFalseConflicts?: boolean;
+  /** How to split string buffers into arrays (default `/\s+/`) */
   stringSeparator?: string | RegExp;
 }
 
+/** Options for `merge`, `mergeDiff3`, and `mergeDigIn`. */
 export interface IMergeLabelOptions extends IMergeOptions {
+  /** Labels to add to the conflict marker lines */
   label?: {
     a?: string;
     o?: string;
@@ -123,7 +133,7 @@ export interface IMergeLabelOptions extends IMergeOptions {
  * http://www.cs.dartmouth.edu/~doug/
  * https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
  *
- * Expects two arrays, finds longest common sequence
+ * Expects two arrays, finds longest common subsequence
  */
 function LCS<T>(buffer1: readonly T[], buffer2: readonly T[]): ILCSResult {
   // A common prefix always ends up in the LCS, matched item for item,
@@ -561,10 +571,25 @@ function pushAll<T>(target: T[], items: readonly T[]): void {
 }
 
 
+// A buffer for the merge functions: an array, or a string to split when `T` is `string`
+type MergeInput<T> = readonly T[] | (T extends string ? string : never);
+
+
 // Splits `buffer` with `separator` if it's a string.
 // (A string buffer means `T` is `string`.)
 function toArray<T>(buffer: string | readonly T[], separator: string | RegExp): readonly T[] {
   return typeof buffer === 'string' ? buffer.split(separator) as T[] : buffer;
+}
+
+
+// Returns the conflict marker lines, with labels if given
+function conflictMarkers(label: IMergeLabelOptions['label'] = {}): { a: string; o: string; x: string; b: string } {
+  return {
+    a: '<<<<<<<' + (label.a ? ` ${label.a}` : ''),
+    o: '|||||||' + (label.o ? ` ${label.o}` : ''),
+    x: '=======',
+    b: '>>>>>>>' + (label.b ? ` ${label.b}` : '')
+  };
 }
 
 
@@ -575,9 +600,9 @@ function toArray<T>(buffer: string | readonly T[], separator: string | RegExp): 
  * A "false conflict" is where `a` and `b` both change the same from `o`
  */
 function diff3Merge<T = string>(
-  a: string | readonly T[],
-  o: string | readonly T[],
-  b: string | readonly T[],
+  a: MergeInput<T>,
+  o: MergeInput<T>,
+  b: MergeInput<T>,
   options?: IMergeOptions
 ): MergeRegion<T>[] {
   const defaults: Required<IMergeOptions> = {
@@ -636,40 +661,33 @@ function diff3Merge<T = string>(
 }
 
 
+/**
+ * Passes arguments to diff3Merge to generate a diff3-style merge result
+ * that includes the original (like `git merge` with `merge.conflictStyle=diff3`).
+ */
 function mergeDiff3<T = string>(
-  a: string | readonly T[],
-  o: string | readonly T[],
-  b: string | readonly T[],
+  a: MergeInput<T>,
+  o: MergeInput<T>,
+  b: MergeInput<T>,
   options?: IMergeLabelOptions
 ): MergeResult<T> {
-  const defaults: Required<IMergeLabelOptions> = {
-    excludeFalseConflicts: true,
-    stringSeparator: /\s+/,
-    label: {}
-  };
-  const opts: Required<IMergeLabelOptions> = { ...defaults, ...options };
-
-  const aSection = '<<<<<<<' + (opts.label.a ? ` ${opts.label.a}` : '');
-  const oSection = '|||||||' + (opts.label.o ? ` ${opts.label.o}` : '');
-  const xSection = '=======';
-  const bSection = '>>>>>>>' + (opts.label.b ? ` ${opts.label.b}` : '');
-
-  const regions = diff3Merge(a, o, b, opts);
+  const marker = conflictMarkers(options?.label);
+  const regions = diff3Merge(a, o, b, options);
   let conflict = false;
   const result: Array<T | string> = [];
 
   regions.forEach(region => {
     if (region.ok) {
       pushAll(result, region.ok);
-    } else if (region.conflict) {
+    } else {
       conflict = true;
-      result.push(aSection);
+      result.push(marker.a);
       pushAll(result, region.conflict.a);
-      result.push(oSection);
+      result.push(marker.o);
       pushAll(result, region.conflict.o);
-      result.push(xSection);
+      result.push(marker.x);
       pushAll(result, region.conflict.b);
-      result.push(bSection);
+      result.push(marker.b);
     }
   });
 
@@ -680,37 +698,30 @@ function mergeDiff3<T = string>(
 }
 
 
+/**
+ * Passes arguments to diff3Merge to generate a diff3-style merge result.
+ */
 function merge<T = string>(
-  a: string | readonly T[],
-  o: string | readonly T[],
-  b: string | readonly T[],
+  a: MergeInput<T>,
+  o: MergeInput<T>,
+  b: MergeInput<T>,
   options?: IMergeLabelOptions
 ): MergeResult<T> {
-  const defaults: Required<IMergeLabelOptions> = {
-    excludeFalseConflicts: true,
-    stringSeparator: /\s+/,
-    label: {}
-  };
-  const opts: Required<IMergeLabelOptions> = { ...defaults, ...options };
-
-  const aSection = '<<<<<<<' + (opts.label.a ? ` ${opts.label.a}` : '');
-  const xSection = '=======';
-  const bSection = '>>>>>>>' + (opts.label.b ? ` ${opts.label.b}` : '');
-
-  const regions = diff3Merge(a, o, b, opts);
+  const marker = conflictMarkers(options?.label);
+  const regions = diff3Merge(a, o, b, options);
   let conflict = false;
   const result: Array<T | string> = [];
 
   regions.forEach(region => {
     if (region.ok) {
       pushAll(result, region.ok);
-    } else if (region.conflict) {
+    } else {
       conflict = true;
-      result.push(aSection);
+      result.push(marker.a);
       pushAll(result, region.conflict.a);
-      result.push(xSection);
+      result.push(marker.x);
       pushAll(result, region.conflict.b);
-      result.push(bSection);
+      result.push(marker.b);
     }
   });
 
@@ -721,24 +732,19 @@ function merge<T = string>(
 }
 
 
+/**
+ * Passes arguments to diff3Merge to generate a digin-style merge result:
+ * each conflict is diffed again, so only the lines that differ between
+ * `a` and `b` are left inside conflict markers.
+ */
 function mergeDigIn<T = string>(
-  a: string | readonly T[],
-  o: string | readonly T[],
-  b: string | readonly T[],
+  a: MergeInput<T>,
+  o: MergeInput<T>,
+  b: MergeInput<T>,
   options?: IMergeLabelOptions
 ): MergeResult<T> {
-  const defaults: Required<IMergeLabelOptions> = {
-    excludeFalseConflicts: true,
-    stringSeparator: /\s+/,
-    label: {}
-  };
-  const opts: Required<IMergeLabelOptions> = { ...defaults, ...options };
-
-  const aSection = '<<<<<<<' + (opts.label.a ? ` ${opts.label.a}` : '');
-  const xSection = '=======';
-  const bSection = '>>>>>>>' + (opts.label.b ? ` ${opts.label.b}` : '');
-
-  const regions = diff3Merge(a, o, b, opts);
+  const marker = conflictMarkers(options?.label);
+  const regions = diff3Merge(a, o, b, options);
   let conflict = false;
   const result: Array<T | string> = [];
 
@@ -752,11 +758,11 @@ function mergeDigIn<T = string>(
           pushAll(result, inner.common);
         } else {
           conflict = true;
-          result.push(aSection);
+          result.push(marker.a);
           pushAll(result, inner.buffer1);
-          result.push(xSection);
+          result.push(marker.x);
           pushAll(result, inner.buffer2);
-          result.push(bSection);
+          result.push(marker.b);
         }
       }
     }
@@ -799,7 +805,7 @@ function patch<T>(buffer: readonly T[], patch: readonly IStrippedPatchRes<T>[]):
 
 /**
  * Takes the output of diffPatch(), and removes extra information from it.
- * It can still be used by patch(), below, but can no longer be inverted.
+ * It can still be used by patch(), above, but can no longer be inverted.
  */
 function stripPatch<T>(patch: readonly IPatchRes<T>[]): IStrippedPatchRes<T>[] {
   return patch.map(chunk => ({
