@@ -34,7 +34,7 @@
     "default": "./dist/js/diff3.mjs"
   },
   "scripts": {
-    "all": "bun run --sequential clean check build test",
+    "all": "bun run --sequential clean check build test package",
     "clean": "bun ./scripts/clean.ts",
     "build": "bun run --parallel 'build:*'",
     "build:js": "bun ./scripts/build_js.ts",
@@ -42,11 +42,17 @@
     "check": "bun run --parallel 'check:*'",
     "check:lint": "oxlint ./scripts ./src ./test",
     "check:types": "tsc --noEmit",
+    "package": "bun run --sequential package:pack package:publint package:attw",
+    "package:pack": "bun pm pack --quiet --ignore-scripts --destination ./build",
+    "package:publint": "publint --level warning ./build/*.tgz",
+    "package:attw": "attw --profile esm-only --no-summary ./build/*.tgz",
     "test": "bun test --dots --coverage ./test"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
     "@types/bun": "^1.4.4",
     "oxlint": "^1.92.0",
+    "publint": "^0.3.25",
     "typescript": "^7.0.2"
   },
   "sideEffects": false,
