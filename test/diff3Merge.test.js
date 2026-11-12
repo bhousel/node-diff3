@@ -155,6 +155,21 @@ description: "description"`;
   });
 
 
+  it('compares objects by identity', () => {
+    // Regression: objects used to all match each other, so `b`'s change was lost
+    const x = { x: 1 };
+    const y = { y: 2 };
+    const z = { z: 3 };
+    const result = Diff3.diff3Merge([x, y], [x], [z]);
+
+    assert.deepEqual(result.length, 1);
+    assert.equal(result[0].conflict.a[0], x);
+    assert.equal(result[0].conflict.a[1], y);
+    assert.equal(result[0].conflict.o[0], x);
+    assert.equal(result[0].conflict.b[0], z);
+  });
+
+
   it('handles very large inputs', () => {
     // Copying a large region with `push(...items)` used to overflow the call stack
     const o = Array.from({ length: 1000000 }, (_, i) => `line ${i}`);

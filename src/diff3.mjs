@@ -45,20 +45,20 @@ function LCS(buffer1, buffer2) {
   // updated for them would cost more than it saves.)
   const SMALL_CLASS = 16;
 
-  // Use a prototype-less object so input elements that happen to match
-  // `Object.prototype` members (`constructor`, `__proto__`, `toString`, ...)
-  // don't shadow the lookup with inherited values.
-  let equivalenceClasses = Object.create(null);
+  // Use a Map so items are matched like `===` (objects by identity, `1` and `'1'`
+  // apart), rather than by their string form as object keys would be.
+  const equivalenceClasses = new Map();
   let largeClasses = [];
   for (let j = prefixLength; j < buffer2.length; j++) {
     const item = buffer2[j];
-    if (equivalenceClasses[item]) {
-      equivalenceClasses[item].push(j);
-      if (equivalenceClasses[item].length === SMALL_CLASS + 1) {
-        largeClasses.push(equivalenceClasses[item]);
+    const indices = equivalenceClasses.get(item);
+    if (indices) {
+      indices.push(j);
+      if (indices.length === SMALL_CLASS + 1) {
+        largeClasses.push(indices);
       }
     } else {
-      equivalenceClasses[item] = [j];
+      equivalenceClasses.set(item, [j]);
     }
   }
 
@@ -121,7 +121,7 @@ function LCS(buffer1, buffer2) {
 
   for (let i = prefixLength; i < buffer1.length; i++) {
     const item = buffer1[i];
-    const indices = equivalenceClasses[item];
+    const indices = equivalenceClasses.get(item);
     if (!indices) continue;
 
     const start = indices.length > SMALL_CLASS ? slotStart.get(indices) : -1;
