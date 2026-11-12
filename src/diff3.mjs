@@ -45,11 +45,23 @@ function LCS(buffer1, buffer2) {
     let c = candidates[0];
 
     for (const j of buffer2indices) {
-      let s;
-      for (s = r; s < candidates.length; s++) {
-        if ((candidates[s].buffer2index < j) && ((s === candidates.length - 1) || (candidates[s + 1].buffer2index > j))) {
-          break;
+      // Find the candidate `s` (at or after `r`) that `j` extends: the one with
+      // `candidates[s].buffer2index < j`, where the next one, if any, is past `j`.
+      // The `buffer2index` values from `r` on are strictly increasing, so the
+      // boundary is found by binary search instead of a linear scan.
+      let lo = r;
+      let hi = candidates.length;
+      while (lo < hi) {
+        const mid = (lo + hi) >>> 1;
+        if (candidates[mid].buffer2index < j) {
+          lo = mid + 1;
+        } else {
+          hi = mid;
         }
+      }
+      let s = candidates.length;
+      if (lo > r && (lo === candidates.length || candidates[lo].buffer2index > j)) {
+        s = lo - 1;
       }
 
       if (s < candidates.length) {
