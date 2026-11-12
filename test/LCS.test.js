@@ -85,6 +85,19 @@ describe('LCS', () => {
     }
   });
 
+  it('matches elements with strict equality', () => {
+    // Regression: elements used to be matched by their string form, so all
+    // objects matched each other, and `1` matched `'1'`.
+    const x = { x: 1 };
+    assert.deepEqual(Diff3.LCS([{ a: 1 }], [{ b: 2 }]).chain, null);
+    assert.deepEqual(Diff3.LCS([{ a: 1 }], [{ a: 1 }]).chain, null);
+    assert.deepEqual(Diff3.LCS([1], ['1']).chain, null);
+    assert.deepEqual(Diff3.LCS([null], ['null']).chain, null);
+
+    const result = Diff3.LCS([x, 1, 'a'], [x, '1', 'a']);
+    assert.deepEqual(lcsPairs([x, 1, 'a'], [x, '1', 'a'], result), [[0, 0], [2, 2]]);
+  });
+
   it('finds a longest common subsequence when inputs have many repeated lines', () => {
     // Small random inputs, mostly empty lines, checked against brute force.
     // Seeded so any failure replays.

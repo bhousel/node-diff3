@@ -63,6 +63,8 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more info.
 
 ## API Reference
 
+Buffers are arrays (or strings, which are split into arrays). Items are compared with strict equality (`===`), so objects match only themselves, and `1` does not match `'1'`.
+
 * [3-way diff and merging](#3-way-diff-and-merging)
   * [diff3Merge](#diff3Merge)
   * [merge](#merge)
