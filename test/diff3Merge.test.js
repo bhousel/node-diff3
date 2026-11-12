@@ -153,4 +153,17 @@ description: "description"`;
     assert.deepEqual(result[0].conflict.a, ['title: "title"', 'description: "description changed"']);
     assert.deepEqual(result[0].conflict.b, ['title: "title changed"', 'description: "description"']);
   });
+
+
+  it('handles very large inputs', () => {
+    // Copying a large region with `push(...items)` used to overflow the call stack
+    const o = Array.from({ length: 1000000 }, (_, i) => `line ${i}`);
+    const a = o.slice();
+    const b = o.slice();
+    b[999000] = 'changed';
+    const result = Diff3.diff3Merge(a, o, b);
+
+    assert.deepEqual(result.length, 1);
+    assert.deepEqual(result[0].ok, b);
+  });
 });

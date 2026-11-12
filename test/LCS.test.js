@@ -89,7 +89,7 @@ describe('LCS', () => {
     // Small random inputs, mostly empty lines, checked against brute force.
     // Seeded so any failure replays.
     let seed = 1;
-    const random = () => (seed = (seed * 1103515245 + 12345) >>> 0) / 2 ** 32;
+    const random = () => (seed = (Math.imul(seed, 1103515245) + 12345) >>> 0) / 2 ** 32;
     const values = ['', '', '', 'a', 'b'];
     const randomBuffer = () => Array.from(
       { length: Math.floor(random() * 20) },
