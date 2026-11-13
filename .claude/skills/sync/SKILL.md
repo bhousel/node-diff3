@@ -38,10 +38,10 @@ For each file in the manifest:
 
 1. Compare the canonical version to the local version recorded in `.sync.manifest.md`. Skip if local is at or above canonical.
 2. Fetch the canonical content from `{raw_base}/templates/{path}`.
-3. Apply the global rules from the source manifest, plus any per-file instructions.
+3. Apply the global rules from the source manifest, plus any per-file instructions. Read the file's Notes in the local manifest first: they describe deliberate differences from the template, so don't undo or re-flag them.
 4. Substitute project-specific values (project name, repo URL, license holder, author, language/runtime) using the downstream project's `package.json` (or equivalent manifest) and existing local files as reference.
 5. Write the file using your file edit tools (see safety rules above).
-6. Update the row for that file in `.sync.manifest.md` (path, new version, today's date, canonical commit SHA if available).
+6. Update the row for that file in `.sync.manifest.md` (path, new version, today's date, canonical commit SHA if available), keeping its Notes. The source manifest's "Local manifest format" section defines the columns; add any that are missing.
 
 ### User-supplied scope hints
 
@@ -68,5 +68,5 @@ Produce a summary table:
 
 Status legend: ✨ Created · 🔄 Updated · ✅ In sync · ⏭️ Skipped (not applicable) · ⚠️ Orphaned
 
-For Created/Updated: one line on what was substituted or what structural changes were adopted.
+For Created/Updated: one line on what was substituted or what structural changes were adopted. If you kept a local difference that has no note, say so and suggest a note for the local manifest.
 For Skipped/Orphaned: one line explaining why.

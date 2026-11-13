@@ -23,7 +23,9 @@ Thumbs.db
 .idea/
 coverage/
 
-# Agent memory
+# Private notes, in any folder (see AGENTS.md)
+PRIVATE.*
+# Older name for private notes, kept for projects that haven't moved yet
 SCRATCHPAD.md
 
 # Logs

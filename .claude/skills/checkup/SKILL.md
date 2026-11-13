@@ -16,11 +16,12 @@ This skill assumes a Bun project. For other ecosystems, use the equivalent comma
 
 Before running anything, recover context:
 
-- Read `AGENTS.md`, the project's working notes (e.g. `SCRATCHPAD.md`, see `AGENTS.md`), and skim the `README`.
+- Read `AGENTS.md`, the project's knowledge (`knowledge/current.md` and `knowledge/backlog.md`, see `AGENTS.md`), a root `PRIVATE.md` if there is one, and skim the `README`.
 - `git log -1 --format='%ad %s' --date=short` gives the **last-activity date**. It anchors section 6.
 - `git status`, `git stash list`, unpushed commits (`git log @{u}..` if there's an upstream), and local branches not merged into the default branch.
 - If `gh` is available: open PRs and issues (`gh pr list`, `gh issue list`), and recent CI runs on the default branch (`gh run list --branch <default> --limit 5`).
-- Open items in the working notes. Some may be easy now, or obsolete.
+- Open items in `current.md` and `backlog.md`. Some may be easy now, or obsolete.
+- `knowledge/` files over the size budgets in `knowledge/README.md`. Suggest `/reflect` to prune them.
 
 ## 2. Baseline health
 
@@ -57,7 +58,7 @@ Report what `/sync` would change, without doing it. (If this repo *is* agent-pra
 3. For each file in the source manifest, compare versions (missing row = version 0). Use the per-file instructions to tell files that are behind apart from files that don't apply here (e.g. `tsconfig.json` in a project without TypeScript).
 4. Also note orphaned rows (in the local manifest, gone from the source) and legacy `.github/prompts/*.prompt.md` files still present.
 
-Make this one item that lists what's behind (local → canonical version) and recommends `/sync`, not one item per file.
+Make this one item that lists what's behind (local → canonical version) and recommends `/sync`, not one item per file. Show each file's local Notes next to it: they record deliberate differences from the template, so that drift is expected, not a problem.
 
 ## 6. What's changed since the last activity date
 
@@ -66,6 +67,7 @@ You are probably a newer model than whatever last worked here. Look at what chan
 - Runtime and language features that replace hand-rolled code or a dependency (new Bun APIs, newer TypeScript or ECMAScript features).
 - Deprecated APIs, config options, and patterns still in use (`tsconfig.json`, `bunfig.toml`, workflows, scripts).
 - Better tools or services for jobs the project does in a roundabout way.
+- **Playbooks**: fetch `https://raw.githubusercontent.com/rapideditor/agent-practices/main/playbooks/README.md` and check each playbook's "Applies when" against this project. Make each one that applies its own item, linking the playbook, and note any order between them.
 - **Agent instructions** in `AGENTS.md` and `.claude/skills/`: workarounds for older models' limits that are no longer needed, instructions that host features now cover, and stale project facts. If the fix belongs in a synced file, say it should go to agent-practices rather than be changed locally.
 
 Be specific: name the file, what to change, and why it's better now. If you aren't sure something is newer than the last-activity date, or stable yet, check the docs or say so. Don't pad this section; no items is a fine answer.
