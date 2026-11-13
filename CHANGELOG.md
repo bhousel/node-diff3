@@ -15,6 +15,34 @@ _Breaking changes, which may affect downstream projects, are marked with a_ ⚠�
 [#xxx]: https://github.com/bhousel/node-diff3/issues/xxx
 -->
 
+## 4.0.0
+##### 2026-Nov-13
+
+* ⚠️  node-diff3 is written in TypeScript now, and ships ESM only ([#98])
+  * The CommonJS build is gone. `require('node-diff3')` still works on Node 20.19+ or 22.12+, which can `require()` ESM modules
+  * The IIFE browser bundle moved to `dist/js/diff3.iife.js`
+  * Type declarations are generated from the source, at `dist/ts/diff3.d.ts`
+  * Bun loads the TypeScript source directly, through a `bun` export condition
+* ⚠️  Compare buffer items with strict equality (`===`) ([#97])
+  * Items used to match by their string form, so all objects matched each other and `1` matched `'1'`. In a merge this could drop a change without reporting a conflict. Output for string inputs is unchanged.
+* ⚠️  Stricter TypeScript types ([#98])
+  * Generics replace `any`, and inputs accept readonly arrays
+  * `MergeRegion` is a union of ok and conflict regions, instead of an interface
+  * `stripPatch()` output type-checks as input to `patch()` (new `IStrippedPatchRes` type)
+  * Merge functions accept a string buffer only when `T` is `string`
+* Speed up `LCS` and merges on large or repetitive inputs, such as text with many blank lines ([#50], [#84], [#89], [#95])
+  * Merges no longer overflow the call stack on very large inputs
+* Internal maintenance: switch from ESLint to oxlint ([#96]), update to TypeScript 7, check the published package with publint and arethetypeswrong
+
+[#50]: https://github.com/bhousel/node-diff3/issues/50
+[#84]: https://github.com/bhousel/node-diff3/issues/84
+[#89]: https://github.com/bhousel/node-diff3/issues/89
+[#95]: https://github.com/bhousel/node-diff3/issues/95
+[#96]: https://github.com/bhousel/node-diff3/issues/96
+[#97]: https://github.com/bhousel/node-diff3/issues/97
+[#98]: https://github.com/bhousel/node-diff3/issues/98
+
+
 ## 3.2.1
 ##### 2026-Jun-03
 
