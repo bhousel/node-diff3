@@ -10,6 +10,7 @@ You are preparing a release for this repo. The new release version is the argume
 Do the following steps in order:
 
 1. **Confirm the version** — the new release version is `VERSION`. Read `package.json` to verify this is a valid bump from the current version.
+   - If it starts with a `v` (e.g. `v1.2.3`), drop the `v`. `CHANGELOG.md` and `package.json` use the bare version; only the git tag has the `v`.
    - The version must follow semver format, for example: `A.B.C` or `A.B.C-pre.D`
    - It must be strictly greater than the current version in `package.json`
    - If either check fails, stop immediately and explain the problem clearly — do not proceed with any further steps.
